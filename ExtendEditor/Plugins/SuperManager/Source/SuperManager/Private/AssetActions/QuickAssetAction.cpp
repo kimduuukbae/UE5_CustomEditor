@@ -89,9 +89,9 @@ void UQuickAssetAction::AddPrefixes()
 void UQuickAssetAction::RemoveUnusedAssets()
 {
 	TArray<FAssetData> SelectedAssetsData = UEditorUtilityLibrary::GetSelectedAssetData();
-	TArray<FAssetData> UnusedAssetsData;
+ 	TArray<FAssetData> UnusedAssetsData;
 
-	FixUpRedirectors();
+	//FixUpRedirectors();
 
 	for (const FAssetData& SelectedAsset : SelectedAssetsData)
 	{
