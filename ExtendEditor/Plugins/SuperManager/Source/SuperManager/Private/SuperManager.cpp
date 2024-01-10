@@ -2,6 +2,9 @@
 
 #include "SuperManager.h"
 #include "ContentBrowserModule.h"
+#include "DebugHeader.h"
+#include "EditorAssetLibrary.h"
+#include "ObjectTools.h"
 
 #define LOCTEXT_NAMESPACE "FSuperManagerModule"
 
@@ -34,11 +37,13 @@ TSharedRef<FExtender> FSuperManagerModule::CustomCBMenuExtender(const TArray<FSt
 
 	if (SelectedPaths.Num() > 0)
 	{
-		MenuExtender->AddMenuExtension(FName("Delete"),
+		MenuExtender->AddMenuExtension(FName("Delete"), 
 			EExtensionHook::After,
 			TSharedPtr<FUICommandList>(),
 			FMenuExtensionDelegate::CreateRaw(this, &FSuperManagerModule::AddCBMenuEntry)
 		);
+
+		FolderPathsSelected = SelectedPaths;
 	}
 
 	return MenuExtender;
@@ -57,6 +62,53 @@ void FSuperManagerModule::AddCBMenuEntry(FMenuBuilder& MenuBuilder)
 
 void FSuperManagerModule::OnDeleteUnusedAssetButtonClicked()
 {
+	if (FolderPathsSelected.Num() > 1)
+	{
+		DebugHeader::ShowMessageDialog(EAppMsgType::Ok, TEXT("You can only do this to one folder"));
+		return;
+	}
+
+	TArray<FString> AssetsPathNames = UEditorAssetLibrary::ListAssets(FolderPathsSelected[0]);
+
+	if (AssetsPathNames.Num() == 0)
+	{
+		DebugHeader::ShowMessageDialog(EAppMsgType::Ok, TEXT("No asset found under selected folder"));
+		return;
+	}
+
+	EAppReturnType::Type ConfirmResult = DebugHeader::ShowMessageDialog(EAppMsgType::YesNo, TEXT("A total of ") + FString::FromInt(AssetsPathNames.Num()) + TEXT(" found\n Would you like to proceed?"));
+
+	if (ConfirmResult == EAppReturnType::No)
+	{
+		return;
+	}
+
+	TArray<FAssetData> UnusedAssetsData;
+	
+	for (const FString& AssetPathName : AssetsPathNames)
+	{
+		if (AssetPathName.Contains(TEXT("Developers")) || AssetPathName.Contains(TEXT("Collections")))
+		{
+			continue;
+		}
+
+		if (!UEditorAssetLibrary::DoesAssetExist(AssetPathName))
+		{
+			continue;
+		}
+
+		TArray<FString>AssetReferencers = UEditorAssetLibrary::FindPackageReferencersForAsset(AssetPathName);
+
+		if (AssetReferencers.Num() == 0)
+		{
+			UnusedAssetsData.Add(UEditorAssetLibrary::FindAssetData(AssetPathName));
+		}
+	}
+
+	if (UnusedAssetsData.Num() > 0)
+	{
+		ObjectTools::DeleteAssets(UnusedAssetsData);
+	}
 }
 
 #pragma endregion
