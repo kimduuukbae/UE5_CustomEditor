@@ -33,6 +33,7 @@ private:
 	void RegisterAdvanceDeletionTab();
 
 	TSharedRef<SDockTab> OnSpawnAdvanceDeletionTab(const FSpawnTabArgs& SpawnTab);
+	TArray<TSharedPtr<FAssetData>> GetAllAssetDataUnderSelectedFolder();
 
 #pragma endregion
 };
