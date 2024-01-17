@@ -21,6 +21,13 @@ public:
 private:
 	TArray<TSharedPtr<FAssetData>> StoredAssetsData;
 
+
+	TSharedRef<SListView<TSharedPtr<FAssetData>>> ConstructAssetListView();
+	TSharedPtr<SListView<TSharedPtr<FAssetData>>> ConstructedAssetListView;
+	void RefreshAssetListView();
+
+#pragma region RowWidgetForAssetListView
+
 	TSharedRef<ITableRow> OnGenerateRowForList(TSharedPtr<FAssetData> AssetDataToDisplay, const TSharedRef<STableViewBase>& OwnerTable);
 	TSharedRef<SCheckBox> ConstructCheckbox(const TSharedPtr<FAssetData>& AssetDataToDisplay);
 	void OnCheckBoxStateChanged(ECheckBoxState NewState, TSharedPtr<FAssetData> AssetData);
@@ -29,6 +36,18 @@ private:
 
 	TSharedRef<SButton> ConstructButtonForRowWidget(const TSharedPtr<FAssetData>& AssetDataToDisplay);
 	FReply OnClickDeleteButton(TSharedPtr<FAssetData> ClickedAssetData);
+
+#pragma endregion
+
+	TSharedRef<SButton> ConstructDeleteAllButton();
+	TSharedRef<SButton> ConstructSelectAllButton();
+	TSharedRef<SButton> ConstructUnSelectAllButton();
+
+	FReply OnClickDeleteAllButton();
+	FReply OnClickSelectAllButton();
+	FReply OnClickUnSelectAllButton();
+
+	TSharedRef<STextBlock> ConstuctTabButtonsText(const FString& TextContent);
 
 	FSlateFontInfo GetEmbossedTextFont() const { return FCoreStyle::Get().GetFontStyle(FName("EmbossedText")); }
 };

@@ -205,6 +205,21 @@ TArray<TSharedPtr<FAssetData>> FSuperManagerModule::GetAllAssetDataUnderSelected
 
 #pragma endregion
 
+
+#pragma region ProcessDataForAssetList
+bool FSuperManagerModule::DeleteSingleAssetForAssetList(const FAssetData& AssetDataToDelete)
+{
+	TArray<FAssetData> AssetDataForDeletion;
+	AssetDataForDeletion.Add(AssetDataToDelete);
+
+	int32 Result = ObjectTools::DeleteAssets(AssetDataForDeletion);
+
+	return Result > 0;
+}
+
+
+#pragma endregion
+
 #undef LOCTEXT_NAMESPACE
 	
 IMPLEMENT_MODULE(FSuperManagerModule, SuperManager)
