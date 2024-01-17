@@ -41,6 +41,7 @@ public:
 
 #pragma region ProcessDataForAssetList
 	bool DeleteSingleAssetForAssetList(const FAssetData& AssetDataToDelete);
+	bool DeleteMultipleAssetForAssetList(const TArray<FAssetData>& AssetsDataToDelete);
 
 
 #pragma endregion

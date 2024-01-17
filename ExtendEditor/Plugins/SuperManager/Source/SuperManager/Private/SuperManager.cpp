@@ -217,6 +217,10 @@ bool FSuperManagerModule::DeleteSingleAssetForAssetList(const FAssetData& AssetD
 	return Result > 0;
 }
 
+bool FSuperManagerModule::DeleteMultipleAssetForAssetList(const TArray<FAssetData>& AssetsDataToDelete)
+{
+	return ObjectTools::DeleteAssets(AssetsDataToDelete) > 0;
+}
 
 #pragma endregion
 

@@ -91,6 +91,7 @@ TSharedRef<SListView<TSharedPtr<FAssetData>>> SAdvanceDeletionTab::ConstructAsse
 
 void SAdvanceDeletionTab::RefreshAssetListView()
 {
+	AssetsDataToDeleteArray.Empty();
 	if (ConstructedAssetListView.IsValid())
 	{
 		ConstructedAssetListView->RebuildList();
@@ -161,8 +162,13 @@ void SAdvanceDeletionTab::OnCheckBoxStateChanged(ECheckBoxState NewState, TShare
 	switch (NewState)
 	{
 	case ECheckBoxState::Unchecked:
+		if (AssetsDataToDeleteArray.Contains(AssetData))
+		{
+			AssetsDataToDeleteArray.Remove(AssetData);
+		}
 		break;
 	case ECheckBoxState::Checked:
+		AssetsDataToDeleteArray.AddUnique(AssetData);
 		break;
 	case ECheckBoxState::Undetermined:
 		break;
@@ -223,6 +229,8 @@ FReply SAdvanceDeletionTab::OnClickDeleteButton(TSharedPtr<FAssetData> ClickedAs
 
 #pragma endregion
 
+#pragma region TabButtons
+
 TSharedRef<SButton> SAdvanceDeletionTab::ConstructDeleteAllButton()
 {
 	TSharedRef<SButton> DeleteAllButton = SNew(SButton)
@@ -261,6 +269,37 @@ TSharedRef<SButton> SAdvanceDeletionTab::ConstructUnSelectAllButton()
 
 FReply SAdvanceDeletionTab::OnClickDeleteAllButton()
 {
+	if (AssetsDataToDeleteArray.Num() == 0)
+	{
+		// None
+		return FReply::Handled();
+	}
+
+	TArray<FAssetData> AssetDataToDelete;
+	AssetDataToDelete.Reserve(AssetsDataToDeleteArray.Num());
+
+	for (const TSharedPtr<FAssetData>& Data : AssetsDataToDeleteArray)
+	{
+		AssetDataToDelete.Add(*Data.Get());
+	}
+
+	FSuperManagerModule& SuperManagerModule = FModuleManager::LoadModuleChecked<FSuperManagerModule>(TEXT("SuperManager"));
+
+	const bool bIsDeleted = SuperManagerModule.DeleteMultipleAssetForAssetList(AssetDataToDelete);
+
+	if (bIsDeleted)
+	{
+		for (const TSharedPtr<FAssetData>& DeletedData : AssetsDataToDeleteArray)
+		{
+			if (StoredAssetsData.Contains(DeletedData))
+			{
+				StoredAssetsData.Remove(DeletedData);
+			}
+		}
+
+		RefreshAssetListView();
+	}
+
 	return FReply::Handled();
 }
 
@@ -286,3 +325,5 @@ TSharedRef<STextBlock> SAdvanceDeletionTab::ConstuctTabButtonsText(const FString
 
 	return TextBlock;
 }
+
+#pragma endregion
