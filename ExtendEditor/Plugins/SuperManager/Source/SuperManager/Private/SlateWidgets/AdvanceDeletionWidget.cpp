@@ -1,6 +1,8 @@
 #include "SlateWidgets/AdvanceDeletionWidget.h"
 #include "SlateBasics.h"
 #include "SuperManager.h"
+#include "EditorAssetLibrary.h"
+#include "AssetRegistryModule.h"
 
 void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 {
@@ -117,6 +119,13 @@ TSharedRef<ITableRow> SAdvanceDeletionTab::OnGenerateRowForList(TSharedPtr<FAsse
 	FSlateFontInfo AssetNameFont = GetEmbossedTextFont();
 	AssetNameFont.Size = 15.0f;
 
+	TArray<FName> ReferencersName;
+	FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry"));
+
+	AssetRegistryModule.Get().GetReferencers(AssetDataToDisplay->PackageName, ReferencersName);
+
+	int32 ReferenceCount = ReferencersName.Num();
+
 	TSharedRef<STableRow<TSharedPtr<FAssetData>>> ListViewRowWidget = SNew(STableRow<TSharedPtr<FAssetData>>, OwnerTable).Padding(FMargin(5.0f))
 	[
 		SNew(SHorizontalBox)
@@ -148,8 +157,18 @@ TSharedRef<ITableRow> SAdvanceDeletionTab::OnGenerateRowForList(TSharedPtr<FAsse
 			ConstructTextForRowWidget(DisplayAssetName, AssetNameFont)
 		]
 
-		// Fourth slot for a button
+		// Reference Count Text
+		+SHorizontalBox::Slot()
+		.HAlign(HAlign_Center)
+		.VAlign(VAlign_Center)
+		[
+			ConstructTextForRowWidget(
+				TEXT("Reference Count : ") + FString::FromInt(ReferenceCount),
+				AssetNameFont
+			)
+		]
 
+		// Fourth slot for a button
 		+SHorizontalBox::Slot()
 		.HAlign(HAlign_Right)
 		[
