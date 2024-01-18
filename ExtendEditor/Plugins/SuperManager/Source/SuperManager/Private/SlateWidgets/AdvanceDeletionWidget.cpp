@@ -5,6 +5,7 @@
 #include "AssetRegistryModule.h"
 
 #define ListAllText TEXT("List All Available Assets")
+#define ListUnusedText TEXT("List Unused Assets")
 
 void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 {
@@ -14,10 +15,13 @@ void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 	TitleTextFont.Size = 30;
 
 	StoredAssetsData = InArgs._AssetsDataToStore;
+	DisplayedAssetsData = StoredAssetsData;
+
 	CheckBoxesArray.Empty();
 	AssetsDataToDeleteArray.Empty();
 
 	ComboSourceItems.Add(MakeShared<FString>(ListAllText));
+	ComboSourceItems.Add(MakeShared<FString>(ListUnusedText));
 
 	ChildSlot
 		[
@@ -96,7 +100,7 @@ TSharedRef<SListView<TSharedPtr<FAssetData>>> SAdvanceDeletionTab::ConstructAsse
 {
 	ConstructedAssetListView = SNew(SListView<TSharedPtr<FAssetData>>)
 	.ItemHeight(24.0f)
-	.ListItemsSource(&StoredAssetsData)
+	.ListItemsSource(&DisplayedAssetsData)
 	.OnGenerateRow(this, &SAdvanceDeletionTab::OnGenerateRowForList);
 
 	return ConstructedAssetListView.ToSharedRef();
@@ -329,7 +333,14 @@ FReply SAdvanceDeletionTab::OnClickDeleteAllButton()
 			{
 				StoredAssetsData.Remove(DeletedData);
 			}
+
+			if (DisplayedAssetsData.Contains(DeletedData))
+			{
+				DisplayedAssetsData.Remove(DeletedData);
+			}
 		}
+
+		
 
 		RefreshAssetListView();
 	}
@@ -413,6 +424,25 @@ TSharedRef<SWidget> SAdvanceDeletionTab::OnGenerateComboContent(TSharedPtr<FStri
 void SAdvanceDeletionTab::OnComboSelectionChanged(TSharedPtr<FString> SelectedOption, ESelectInfo::Type InSelectInfo)
 {
 	ComboDisplayTextBlock->SetText(FText::FromString(*SelectedOption.Get()));
+
+	FSuperManagerModule& SuperManagerModule = FModuleManager::LoadModuleChecked<FSuperManagerModule>(TEXT("SuperManager"));
+
+	//Pass data for our module to filter
+
+	if (*SelectedOption.Get() == ListAllText)
+	{
+		// List all stored asset data
+		DisplayedAssetsData = StoredAssetsData;
+		RefreshAssetListView();
+	}
+	else if (*SelectedOption.Get() == ListUnusedText)
+	{
+		// List all unused assets
+		DisplayedAssetsData.Empty();
+
+		SuperManagerModule.ListUnusedAssetsForAssetList(StoredAssetsData, DisplayedAssetsData);
+		RefreshAssetListView();
+	}
 }
 
 #pragma endregion

@@ -74,6 +74,8 @@ void FSuperManagerModule::AddCBMenuEntry(FMenuBuilder& MenuBuilder)
 
 void FSuperManagerModule::OnAdvanceDeletionButtonClicked()
 {
+	FixUpRedirectors();
+
 	FGlobalTabmanager::Get()->TryInvokeTab(FName("AdvanceDeletion"));
 }
 
@@ -220,6 +222,19 @@ bool FSuperManagerModule::DeleteSingleAssetForAssetList(const FAssetData& AssetD
 bool FSuperManagerModule::DeleteMultipleAssetForAssetList(const TArray<FAssetData>& AssetsDataToDelete)
 {
 	return ObjectTools::DeleteAssets(AssetsDataToDelete) > 0;
+}
+
+void FSuperManagerModule::ListUnusedAssetsForAssetList(const TArray<TSharedPtr<FAssetData>>& AssetsDataToFilter, TArray<TSharedPtr<FAssetData>>& OutUnusedAssetData)
+{
+	for (const TSharedPtr<FAssetData>& AssetData : AssetsDataToFilter)
+	{
+		TArray<FString> AssetReferencers = UEditorAssetLibrary::FindPackageReferencersForAsset(AssetData->ObjectPath.ToString());
+
+		if (AssetReferencers.Num() == 0)
+		{
+			OutUnusedAssetData.Add(AssetData);
+		}
+	}
 }
 
 #pragma endregion
