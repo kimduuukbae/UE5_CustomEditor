@@ -10,6 +10,8 @@ void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 	TitleTextFont.Size = 30;
 
 	StoredAssetsData = InArgs._AssetsDataToStore;
+	CheckBoxesArray.Empty();
+	AssetsDataToDeleteArray.Empty();
 
 	ChildSlot
 		[
@@ -92,6 +94,8 @@ TSharedRef<SListView<TSharedPtr<FAssetData>>> SAdvanceDeletionTab::ConstructAsse
 void SAdvanceDeletionTab::RefreshAssetListView()
 {
 	AssetsDataToDeleteArray.Empty();
+	CheckBoxesArray.Empty();
+
 	if (ConstructedAssetListView.IsValid())
 	{
 		ConstructedAssetListView->RebuildList();
@@ -184,6 +188,8 @@ TSharedRef<SCheckBox> SAdvanceDeletionTab::ConstructCheckbox(const TSharedPtr<FA
 	.OnCheckStateChanged(this, &SAdvanceDeletionTab::OnCheckBoxStateChanged, AssetDataToDisplay)
 	.Visibility(EVisibility::Visible);
 
+	CheckBoxesArray.Add(ConstructedCheckBox);
+
 	return ConstructedCheckBox;
 }
 
@@ -221,7 +227,7 @@ FReply SAdvanceDeletionTab::OnClickDeleteButton(TSharedPtr<FAssetData> ClickedAs
 		}
 
 		// Refresh the list 
-		RefreshAssetListView();
+		RefreshAssetListView(); 
 	}
 
 	return FReply::Handled();
@@ -305,11 +311,37 @@ FReply SAdvanceDeletionTab::OnClickDeleteAllButton()
 
 FReply SAdvanceDeletionTab::OnClickSelectAllButton()
 {
+	if (CheckBoxesArray.Num() == 0)
+	{
+		return FReply::Handled();
+	}
+
+	for (const TSharedRef<SCheckBox>& CheckBox : CheckBoxesArray)
+	{
+		if (!CheckBox->IsChecked())
+		{
+			CheckBox->ToggleCheckedState();
+		}
+	}
+
 	return FReply::Handled();
 }
 
 FReply SAdvanceDeletionTab::OnClickUnSelectAllButton()
 {
+	if (CheckBoxesArray.Num() == 0)
+	{
+		return FReply::Handled();
+	}
+
+	for (const TSharedRef<SCheckBox>& CheckBox : CheckBoxesArray)
+	{
+		if (CheckBox->IsChecked())
+		{
+			CheckBox->ToggleCheckedState();
+		}
+	}
+
 	return FReply::Handled();
 }
 
