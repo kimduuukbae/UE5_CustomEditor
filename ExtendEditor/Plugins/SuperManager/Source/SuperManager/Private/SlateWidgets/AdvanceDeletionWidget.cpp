@@ -11,7 +11,7 @@ void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 {
 	bCanSupportFocus = true;
 
-	FSlateFontInfo TitleTextFont = FCoreStyle::Get().GetFontStyle(FName("EmbossedText"));
+	FSlateFontInfo TitleTextFont = GetEmbossedTextFont();
 	TitleTextFont.Size = 30;
 
 	StoredAssetsData = InArgs._AssetsDataToStore;
@@ -19,6 +19,7 @@ void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 
 	CheckBoxesArray.Empty();
 	AssetsDataToDeleteArray.Empty();
+	ComboSourceItems.Empty();
 
 	ComboSourceItems.Add(MakeShared<FString>(ListAllText));
 	ComboSourceItems.Add(MakeShared<FString>(ListUnusedText));
@@ -101,7 +102,8 @@ TSharedRef<SListView<TSharedPtr<FAssetData>>> SAdvanceDeletionTab::ConstructAsse
 	ConstructedAssetListView = SNew(SListView<TSharedPtr<FAssetData>>)
 	.ItemHeight(24.0f)
 	.ListItemsSource(&DisplayedAssetsData)
-	.OnGenerateRow(this, &SAdvanceDeletionTab::OnGenerateRowForList);
+	.OnGenerateRow(this, &SAdvanceDeletionTab::OnGenerateRowForList)
+	.OnMouseButtonDoubleClick(this, &SAdvanceDeletionTab::OnDoubleClickRowWidget);
 
 	return ConstructedAssetListView.ToSharedRef();
 }
@@ -225,6 +227,13 @@ TSharedRef<SCheckBox> SAdvanceDeletionTab::ConstructCheckbox(const TSharedPtr<FA
 	return ConstructedCheckBox;
 }
 
+void SAdvanceDeletionTab::OnDoubleClickRowWidget(TSharedPtr<FAssetData> ClickedData)
+{
+	FSuperManagerModule& SuperManagerModule = FModuleManager::LoadModuleChecked<FSuperManagerModule>(TEXT("SuperManager"));
+
+	SuperManagerModule.SyncContentBrowser(ClickedData->ObjectPath.ToString());
+}
+
 TSharedRef<STextBlock> SAdvanceDeletionTab::ConstructTextForRowWidget(const FString& TextContent, const FSlateFontInfo& FontToUse)
 {
 	TSharedRef<STextBlock> ConstructedTextBlock = SNew(STextBlock)
@@ -256,6 +265,11 @@ FReply SAdvanceDeletionTab::OnClickDeleteButton(TSharedPtr<FAssetData> ClickedAs
 		if (StoredAssetsData.Contains(ClickedAssetData))
 		{
 			StoredAssetsData.Remove(ClickedAssetData);
+		}
+
+		if (DisplayedAssetsData.Contains(ClickedAssetData))
+		{
+			DisplayedAssetsData.Remove(ClickedAssetData);
 		}
 
 		// Refresh the list 

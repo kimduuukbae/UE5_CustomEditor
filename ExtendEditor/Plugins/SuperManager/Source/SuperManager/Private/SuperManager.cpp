@@ -74,8 +74,6 @@ void FSuperManagerModule::AddCBMenuEntry(FMenuBuilder& MenuBuilder)
 
 void FSuperManagerModule::OnAdvanceDeletionButtonClicked()
 {
-	FixUpRedirectors();
-
 	FGlobalTabmanager::Get()->TryInvokeTab(FName("AdvanceDeletion"));
 }
 
@@ -235,6 +233,13 @@ void FSuperManagerModule::ListUnusedAssetsForAssetList(const TArray<TSharedPtr<F
 			OutUnusedAssetData.Add(AssetData);
 		}
 	}
+}
+
+void FSuperManagerModule::SyncContentBrowser(const FString& AssetPath)
+{
+	TArray<FString> AssetPathToSync{AssetPath};
+
+	UEditorAssetLibrary::SyncBrowserToObjects(AssetPathToSync);
 }
 
 #pragma endregion
