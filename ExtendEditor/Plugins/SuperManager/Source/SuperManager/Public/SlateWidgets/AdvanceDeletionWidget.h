@@ -12,6 +12,7 @@ class SAdvanceDeletionTab : public SCompoundWidget
 	}
 
 	SLATE_ARGUMENT(TArray<TSharedPtr<FAssetData>>, AssetsDataToStore)
+	SLATE_ARGUMENT(FString, CurrentSelectedFolder)
 
 	SLATE_END_ARGS()
 
@@ -28,6 +29,11 @@ private:
 	TSharedPtr<SListView<TSharedPtr<FAssetData>>> ConstructedAssetListView;
 	void RefreshAssetListView();
 
+#pragma region SearchBox
+	TSharedPtr<SSearchBox> SearchBox;
+	TSharedRef<SSearchBox> ConstructSearchBox();
+#pragma endregion
+
 #pragma region ComboBox
 
 	TSharedRef<SComboBox<TSharedPtr<FString>>> ConstructComboBox();
@@ -38,6 +44,8 @@ private:
 	void OnComboSelectionChanged(TSharedPtr<FString> SelectedOption, ESelectInfo::Type InSelectInfo);
 
 	TSharedPtr<STextBlock> ComboDisplayTextBlock;
+
+	TSharedRef<STextBlock> ConstructComboHelpText(const FString& Text, const FSlateFontInfo& FontToUse);
 
 #pragma endregion
 

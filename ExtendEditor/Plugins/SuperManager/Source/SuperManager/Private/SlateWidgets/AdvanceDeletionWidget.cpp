@@ -3,6 +3,8 @@
 #include "SuperManager.h"
 #include "EditorAssetLibrary.h"
 #include "AssetRegistryModule.h"
+#include "Widgets/Input/SSearchBox.h"
+#include "DebugHeader.h"
 
 #define ListAllText TEXT("List All Available Assets")
 #define ListUnusedText TEXT("List Unused Assets")
@@ -13,6 +15,9 @@ void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 
 	FSlateFontInfo TitleTextFont = GetEmbossedTextFont();
 	TitleTextFont.Size = 30;
+
+	FSlateFontInfo ComboBoxHelpTextFont = GetEmbossedTextFont();
+	ComboBoxHelpTextFont.Size = 15;
 
 	StoredAssetsData = InArgs._AssetsDataToStore;
 	DisplayedAssetsData = StoredAssetsData;
@@ -49,6 +54,17 @@ void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 			.AutoWidth()
 			[
 				ConstructComboBox()
+			]
+
+			+ SHorizontalBox::Slot()
+			[
+				ConstructSearchBox()
+			]
+
+			+ SHorizontalBox::Slot()
+			.FillWidth(0.1f)
+			[
+				ConstructComboHelpText(TEXT("Current Folder : \n") + InArgs._CurrentSelectedFolder, ComboBoxHelpTextFont)
 			]
 		]
 
@@ -117,6 +133,36 @@ void SAdvanceDeletionTab::RefreshAssetListView()
 	{
 		ConstructedAssetListView->RebuildList();
 	}
+}
+
+TSharedRef<SSearchBox> SAdvanceDeletionTab::ConstructSearchBox()
+{
+	SAssignNew(SearchBox, SSearchBox)
+		.HintText(FText::FromString("Enter text to Asset Name"))
+		.OnTextChanged_Lambda([this](const FText& Text)
+		{
+			if (Text.IsEmpty())
+			{
+				DebugHeader::Print(TEXT("Text Is Empty"), FColor::Cyan);
+				DisplayedAssetsData = StoredAssetsData;
+			}
+			else
+			{
+				DisplayedAssetsData.Empty();
+				for (const TSharedPtr<FAssetData>& AssetData : StoredAssetsData)
+				{
+					if (AssetData->AssetName.ToString().Contains(Text.ToString()))
+					{
+						DisplayedAssetsData.Add(AssetData);
+					}
+				}
+			}
+
+			RefreshAssetListView();
+		});
+
+
+	return SearchBox.ToSharedRef();
 }
 
 #pragma region RowWidgetForAssetListView
@@ -457,6 +503,15 @@ void SAdvanceDeletionTab::OnComboSelectionChanged(TSharedPtr<FString> SelectedOp
 		SuperManagerModule.ListUnusedAssetsForAssetList(StoredAssetsData, DisplayedAssetsData);
 		RefreshAssetListView();
 	}
+}
+
+TSharedRef<STextBlock> SAdvanceDeletionTab::ConstructComboHelpText(const FString& Text, const FSlateFontInfo& FontToUse)
+{
+	return SNew(STextBlock)
+		.Text(FText::FromString(Text))
+		.Font(FontToUse)
+		.Justification(ETextJustify::Center)
+		.AutoWrapText(true);
 }
 
 #pragma endregion
