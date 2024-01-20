@@ -31,6 +31,8 @@ private:
 
 #pragma region QuickMaterialCreation
 	bool ProcessSelectedData(const TArray<FAssetData>& SelectedDataToProcess, TArray<UTexture2D*>& OutResult, FString& OutSelectedTexturePackagePath);
+	bool IsNameUsed(const FString& FolderPath, const FString& TargetMaterialName);
+	UMaterial* CreateMaterialAsset(const FString& CreateMaterialName, const FString& Path);
 #pragma endregion
 
 };
