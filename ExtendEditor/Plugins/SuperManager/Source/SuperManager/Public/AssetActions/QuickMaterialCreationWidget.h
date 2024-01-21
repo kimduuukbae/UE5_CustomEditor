@@ -27,6 +27,18 @@ public:
 
 #pragma endregion
 
+#pragma region SupportedTextureNames
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Supported Texture names")
+		TArray<FString> BaseColorArray =
+	{
+		TEXT("_BaseColor"),
+		TEXT("_Albedo"),
+		TEXT("_Diffuse"),
+		TEXT("_diff")
+	};
+#pragma endregion
+
+
 private:
 
 #pragma region QuickMaterialCreation
