@@ -84,6 +84,13 @@ private:
 #pragma region CreateMaterialNodes
 	bool TryConnectBaseColor(UMaterialExpressionTextureSample* SampleNode, UTexture2D* Texture, UMaterial* Material);
 	bool TryConnectMetalic(UMaterialExpressionTextureSample* SampleNode, UTexture2D* Texture, UMaterial* Material);
+	bool TryConnectRoughness(UMaterialExpressionTextureSample* SampleNode, UTexture2D* Texture, UMaterial* Material);
+	bool TryConnectNormal(UMaterialExpressionTextureSample* SampleNode, UTexture2D* Texture, UMaterial* Material);
+	bool TryConnectAmbientOcclusion(UMaterialExpressionTextureSample* SampleNode, UTexture2D* Texture, UMaterial* Material);
+
+
+	/* Node Function */
+	bool CheckNodeConnected(UMaterial* Material, EMaterialProperty Property);
 #pragma endregion
 
 

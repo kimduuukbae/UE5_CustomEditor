@@ -158,28 +158,48 @@ void UQuickMaterialCreationWidget::DefaultCreateMaterialNodes(UMaterial* Materia
 		++OutConnectedPinNumber;
 		return;
 	}
+
+	if (TryConnectRoughness(TextureSampleNode, Texture, Material) == true)
+	{
+		++OutConnectedPinNumber;
+		return;
+	}
+
+	if (TryConnectNormal(TextureSampleNode, Texture, Material) == true)
+	{
+		++OutConnectedPinNumber;
+		return;
+	}
+
+	if (TryConnectAmbientOcclusion(TextureSampleNode, Texture, Material) == true)
+	{
+		++OutConnectedPinNumber;
+		return;
+	}
 }
 #pragma endregion
 
 #pragma region CreateMaterialNodes
 bool UQuickMaterialCreationWidget::TryConnectBaseColor(UMaterialExpressionTextureSample* SampleNode, UTexture2D* Texture, UMaterial* Material)
 {
+	if (CheckNodeConnected(Material, EMaterialProperty::MP_BaseColor))
+	{
+		return false;
+	}
+
 	for (const FString& BaseColorName : BaseColorArray)
 	{
 		if (Texture->GetName().Contains(BaseColorName))
 		{
-			if (Material->GetExpressionInputForProperty(EMaterialProperty::MP_BaseColor)->IsConnected() == false)
-			{
-				SampleNode->Texture = Texture;
+			SampleNode->Texture = Texture;
 
-				Material->GetExpressionCollection().AddExpression(SampleNode);
-				Material->GetExpressionInputForProperty(EMaterialProperty::MP_BaseColor)->Connect(0, SampleNode);
-				Material->PostEditChange();
+			Material->GetExpressionCollection().AddExpression(SampleNode);
+			Material->GetExpressionInputForProperty(EMaterialProperty::MP_BaseColor)->Connect(0, SampleNode);
+			Material->PostEditChange();
 
-				SampleNode->MaterialExpressionEditorX -= 600;
+			SampleNode->MaterialExpressionEditorX -= 600;
 
-				return true;
-			}
+			return true;
 		}
 	}
 
@@ -187,32 +207,130 @@ bool UQuickMaterialCreationWidget::TryConnectBaseColor(UMaterialExpressionTextur
 }
 bool UQuickMaterialCreationWidget::TryConnectMetalic(UMaterialExpressionTextureSample* SampleNode, UTexture2D* Texture, UMaterial* Material)
 {
+	if (CheckNodeConnected(Material, EMaterialProperty::MP_Metallic))
+	{
+		return false;
+	}
+
 	for (const FString& MetalicName : MetalicArray)
 	{
 		if (Texture->GetName().Contains(MetalicName))
 		{
-			if (Material->GetExpressionInputForProperty(EMaterialProperty::MP_Metallic)->IsConnected() == false)
-			{
-				// Metalic SRGB is false 
-				Texture->CompressionSettings = TextureCompressionSettings::TC_Default;
-				Texture->SRGB = false;
-				Texture->PostEditChange();
 
-				SampleNode->Texture = Texture;
-				SampleNode->SamplerType = EMaterialSamplerType::SAMPLERTYPE_LinearColor;
+			// Metalic SRGB is false 
+			Texture->CompressionSettings = TextureCompressionSettings::TC_Default;
+			Texture->SRGB = false;
+			Texture->PostEditChange();
 
-				Material->GetExpressionCollection().AddExpression(SampleNode);
-				Material->GetExpressionInputForProperty(EMaterialProperty::MP_Metallic)->Connect(0, SampleNode);
-				Material->PostEditChange();
+			SampleNode->Texture = Texture;
+			SampleNode->SamplerType = EMaterialSamplerType::SAMPLERTYPE_LinearColor;
 
-				SampleNode->MaterialExpressionEditorX -= 600;
-				SampleNode->MaterialExpressionEditorY += 240;
+			Material->GetExpressionCollection().AddExpression(SampleNode);
+			Material->GetExpressionInputForProperty(EMaterialProperty::MP_Metallic)->Connect(0, SampleNode);
+			Material->PostEditChange();
 
-				return true;
-			}
+			SampleNode->MaterialExpressionEditorX -= 600;
+			SampleNode->MaterialExpressionEditorY += 240;
+
+			return true;
 		}
 	}
 
 	return false;
+}
+bool UQuickMaterialCreationWidget::TryConnectRoughness(UMaterialExpressionTextureSample* SampleNode, UTexture2D* Texture, UMaterial* Material)
+{
+	if (CheckNodeConnected(Material, EMaterialProperty::MP_Roughness))
+	{
+		return false;
+	}
+
+	for (const FString& RoughnessName : RoughnessArray)
+	{
+		if (Texture->GetName().Contains(RoughnessName))
+		{
+			Texture->CompressionSettings = TextureCompressionSettings::TC_Default;
+			Texture->SRGB = false;
+			Texture->PostEditChange();
+
+			SampleNode->Texture = Texture;
+			SampleNode->SamplerType = EMaterialSamplerType::SAMPLERTYPE_LinearColor;
+
+			Material->GetExpressionCollection().AddExpression(SampleNode);
+			Material->GetExpressionInputForProperty(EMaterialProperty::MP_Roughness)->Connect(0, SampleNode);
+			Material->PostEditChange();
+
+			SampleNode->MaterialExpressionEditorX -= 600;
+			SampleNode->MaterialExpressionEditorY += 480;
+
+			return true;
+		}
+	}
+
+	return false;
+}
+bool UQuickMaterialCreationWidget::TryConnectNormal(UMaterialExpressionTextureSample* SampleNode, UTexture2D* Texture, UMaterial* Material)
+{
+	if (CheckNodeConnected(Material, EMaterialProperty::MP_Normal))
+	{
+		return false;
+	}
+
+	for (const FString& NormalName : NormalArray)
+	{
+		if (Texture->GetName().Contains(NormalName))
+		{
+			SampleNode->Texture = Texture;
+			SampleNode->SamplerType = EMaterialSamplerType::SAMPLERTYPE_Normal;
+
+			Material->GetExpressionCollection().AddExpression(SampleNode);
+			Material->GetExpressionInputForProperty(EMaterialProperty::MP_Normal)->Connect(0, SampleNode);
+			Material->PostEditChange();
+
+			SampleNode->MaterialExpressionEditorX -= 600;
+			SampleNode->MaterialExpressionEditorY += 720;
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool UQuickMaterialCreationWidget::TryConnectAmbientOcclusion(UMaterialExpressionTextureSample* SampleNode, UTexture2D* Texture, UMaterial* Material)
+{
+	if (CheckNodeConnected(Material, EMaterialProperty::MP_AmbientOcclusion))
+	{
+		return false;
+	}
+
+	for (const FString& AOName : AOArray)
+	{
+		if (Texture->GetName().Contains(AOName))
+		{
+			Texture->CompressionSettings = TextureCompressionSettings::TC_Default;
+			Texture->SRGB = false;
+			Texture->PostEditChange();
+
+			SampleNode->Texture = Texture;
+			SampleNode->SamplerType = EMaterialSamplerType::SAMPLERTYPE_LinearColor;
+
+			Material->GetExpressionCollection().AddExpression(SampleNode);
+			Material->GetExpressionInputForProperty(EMaterialProperty::MP_AmbientOcclusion)->Connect(0, SampleNode);
+			Material->PostEditChange();
+
+			SampleNode->MaterialExpressionEditorX -= 600;
+			SampleNode->MaterialExpressionEditorY += 960;
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool UQuickMaterialCreationWidget::CheckNodeConnected(UMaterial* Material, EMaterialProperty Property)
+{
+	return Material->GetExpressionInputForProperty(Property)->IsConnected();
 }
 #pragma endregion
