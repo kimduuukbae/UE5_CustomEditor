@@ -19,11 +19,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CreateMaterialFromSelectedTextures();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CreateMaterialFromSelectedTextures", meta = (EditCondtion = "bCustomMaterialName"))
-	FString MaterialName = TEXT("M_");
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CreateMaterialFromSelectedTextures")
 	bool bCustomMaterialName = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CreateMaterialFromSelectedTextures", meta = (EditCondition = "bCustomMaterialName"))
+	FString MaterialName = TEXT("M_");
 
 #pragma endregion
 
@@ -36,6 +36,38 @@ public:
 		TEXT("_Diffuse"),
 		TEXT("_diff")
 	};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Supported Texture names")
+	TArray<FString> MetallicArray =
+	{
+		TEXT("_Metallic"),
+		TEXT("_metal"),
+	};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Supported Texture names")
+	TArray<FString> RoughnessArray =
+	{
+		TEXT("_Roughness"),
+		TEXT("_RoughnessMap"),
+		TEXT("_rough"),
+	};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Supported Texture names")
+	TArray<FString> NormalArray =
+	{
+		TEXT("_Normal"),
+		TEXT("_NormalMap"),
+		TEXT("_nor"),
+		TEXT("_N"),
+	};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Supported Texture names")
+	TArray<FString> AOArray =
+	{
+		TEXT("_AmbientOcclusion"),
+		TEXT("_AmbientOcclusionMap"),
+		TEXT("_AO"),
+	};
 #pragma endregion
 
 
@@ -45,6 +77,13 @@ private:
 	bool ProcessSelectedData(const TArray<FAssetData>& SelectedDataToProcess, TArray<UTexture2D*>& OutResult, FString& OutSelectedTexturePackagePath);
 	bool IsNameUsed(const FString& FolderPath, const FString& TargetMaterialName);
 	UMaterial* CreateMaterialAsset(const FString& CreateMaterialName, const FString& Path);
+
+	void DefaultCreateMaterialNodes(UMaterial* Material, UTexture2D* Texture, uint32& OutConnectedPinNumber);
 #pragma endregion
+
+#pragma region CreateMaterialNodes
+	bool TryConnectBaseColor(UMaterialExpressionTextureSample* SampleNode, UTexture2D* Texture, UMaterial* Material);
+#pragma endregion
+
 
 };

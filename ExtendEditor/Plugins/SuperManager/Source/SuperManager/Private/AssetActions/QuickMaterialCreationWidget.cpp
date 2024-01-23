@@ -23,6 +23,7 @@ void UQuickMaterialCreationWidget::CreateMaterialFromSelectedTextures()
 	TArray<FAssetData> SelectedAssetsData = UEditorUtilityLibrary::GetSelectedAssetData();
 	TArray<UTexture2D*> SelectedTexturesArray;
 	FString PackagePath;
+	uint32 ConnectedCounter = 0;
 
 	if (ProcessSelectedData(SelectedAssetsData, SelectedTexturesArray, PackagePath) == false)
 	{
@@ -40,6 +41,16 @@ void UQuickMaterialCreationWidget::CreateMaterialFromSelectedTextures()
 	{
 		DebugHeader::ShowMessageDialog(EAppMsgType::Ok, TEXT("Failed to create material"));
 		return;
+	}
+
+	for (UTexture2D* SelectedTexture : SelectedTexturesArray)
+	{
+		if (SelectedTexture == nullptr)
+		{
+			continue;
+		}
+
+		DefaultCreateMaterialNodes(CreatedMaterial, SelectedTexture, ConnectedCounter);
 	}
 }
 #pragma endregion
@@ -114,5 +125,58 @@ UMaterial* UQuickMaterialCreationWidget::CreateMaterialAsset(const FString& Crea
 	UObject* CreatedObject = AssetToolsModule.Get().CreateAsset(CreateMaterialName, Path, UMaterial::StaticClass(), MaterialFactory);
 
 	return Cast<UMaterial>(CreatedObject);
+}
+void UQuickMaterialCreationWidget::DefaultCreateMaterialNodes(UMaterial* Material, UTexture2D* Texture, uint32& OutConnectedPinNumber)
+{
+	UMaterialExpressionTextureSample* TextureSampleNode = NewObject<UMaterialExpressionTextureSample>(Material);
+
+	if (TextureSampleNode == nullptr)
+	{
+		return;
+	}
+
+	/*	Material BaseColor have been made private in 5.1
+		So, We need to use something like this : 
+		
+		Material->GetExpressionCollection().AddExpression(TextureSampleNode);
+		- Instead of directly accessing the array Expression, getter function then use to add in the texture sample node 
+
+		Material->GetExpressionInputForProperty(MP_BaseColor)->Connect(0, TextureSampleNode);
+		- no longer have direct access 
+
+		This means that you will connect a new Expression (Texture) and then connect it to the BaseColor Node in Material.
+	*/
+
+	if (TryConnectBaseColor(TextureSampleNode, Texture, Material) == true)
+	{
+		++OutConnectedPinNumber;
+	}
+	
+}
+#pragma endregion
+
+#pragma region CreateMaterialNodes
+bool UQuickMaterialCreationWidget::TryConnectBaseColor(UMaterialExpressionTextureSample* SampleNode, UTexture2D* Texture, UMaterial* Material)
+{
+	for (const FString& BaseColorName : BaseColorArray)
+	{
+		if (Texture->GetName().Contains(BaseColorName))
+		{
+			if (Material->GetExpressionInputForProperty(EMaterialProperty::MP_BaseColor)->IsConnected() == false)
+			{
+				SampleNode->Texture = Texture;
+
+				Material->GetExpressionCollection().AddExpression(SampleNode);
+				Material->GetExpressionInputForProperty(EMaterialProperty::MP_BaseColor)->Connect(0, SampleNode);
+				Material->PostEditChange();
+
+				SampleNode->MaterialExpressionEditorX -= 600;
+
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 #pragma endregion
