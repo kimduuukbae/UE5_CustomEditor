@@ -150,8 +150,14 @@ void UQuickMaterialCreationWidget::DefaultCreateMaterialNodes(UMaterial* Materia
 	if (TryConnectBaseColor(TextureSampleNode, Texture, Material) == true)
 	{
 		++OutConnectedPinNumber;
+		return;
 	}
-	
+
+	if (TryConnectMetalic(TextureSampleNode, Texture, Material) == true)
+	{
+		++OutConnectedPinNumber;
+		return;
+	}
 }
 #pragma endregion
 
@@ -171,6 +177,36 @@ bool UQuickMaterialCreationWidget::TryConnectBaseColor(UMaterialExpressionTextur
 				Material->PostEditChange();
 
 				SampleNode->MaterialExpressionEditorX -= 600;
+
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+bool UQuickMaterialCreationWidget::TryConnectMetalic(UMaterialExpressionTextureSample* SampleNode, UTexture2D* Texture, UMaterial* Material)
+{
+	for (const FString& MetalicName : MetalicArray)
+	{
+		if (Texture->GetName().Contains(MetalicName))
+		{
+			if (Material->GetExpressionInputForProperty(EMaterialProperty::MP_Metallic)->IsConnected() == false)
+			{
+				// Metalic SRGB is false 
+				Texture->CompressionSettings = TextureCompressionSettings::TC_Default;
+				Texture->SRGB = false;
+				Texture->PostEditChange();
+
+				SampleNode->Texture = Texture;
+				SampleNode->SamplerType = EMaterialSamplerType::SAMPLERTYPE_LinearColor;
+
+				Material->GetExpressionCollection().AddExpression(SampleNode);
+				Material->GetExpressionInputForProperty(EMaterialProperty::MP_Metallic)->Connect(0, SampleNode);
+				Material->PostEditChange();
+
+				SampleNode->MaterialExpressionEditorX -= 600;
+				SampleNode->MaterialExpressionEditorY += 240;
 
 				return true;
 			}

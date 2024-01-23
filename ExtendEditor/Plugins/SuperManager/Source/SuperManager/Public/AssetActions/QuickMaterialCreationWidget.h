@@ -38,7 +38,7 @@ public:
 	};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Supported Texture names")
-	TArray<FString> MetallicArray =
+	TArray<FString> MetalicArray =
 	{
 		TEXT("_Metallic"),
 		TEXT("_metal"),
@@ -83,6 +83,7 @@ private:
 
 #pragma region CreateMaterialNodes
 	bool TryConnectBaseColor(UMaterialExpressionTextureSample* SampleNode, UTexture2D* Texture, UMaterial* Material);
+	bool TryConnectMetalic(UMaterialExpressionTextureSample* SampleNode, UTexture2D* Texture, UMaterial* Material);
 #pragma endregion
 
 
