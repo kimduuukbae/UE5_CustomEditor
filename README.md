@@ -22,3 +22,5 @@ Within this tab, you can delete any asset you want.
 You can choose the texture you want and quickly create the material.
 
 All Textures are automatically connected to Pin as long as the name conventions are followed.
+
+### 3. Impl...
