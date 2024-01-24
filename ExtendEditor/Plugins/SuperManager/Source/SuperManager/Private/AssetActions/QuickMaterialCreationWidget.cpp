@@ -176,6 +176,8 @@ void UQuickMaterialCreationWidget::DefaultCreateMaterialNodes(UMaterial* Materia
 		++OutConnectedPinNumber;
 		return;
 	}
+
+	MaterialName = TEXT("M_");
 }
 #pragma endregion
 
