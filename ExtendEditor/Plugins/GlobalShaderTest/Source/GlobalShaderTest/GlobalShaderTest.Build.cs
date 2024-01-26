@@ -30,7 +30,6 @@ public class GlobalShaderTest : ModuleRules
 				"Engine",
 				"RHI",
 				"RenderCore",
-				"ShaderCore",
 				"Projects"
 				// ... add other public dependencies that you statically link with here ...
 			}
