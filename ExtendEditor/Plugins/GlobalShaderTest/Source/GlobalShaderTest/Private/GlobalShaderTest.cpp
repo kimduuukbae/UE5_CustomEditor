@@ -1,11 +1,14 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "GlobalShaderTest.h"
+#include "Interfaces/IPluginManager.h"
 
 #define LOCTEXT_NAMESPACE "FGlobalShaderTestModule"
 
 void FGlobalShaderTestModule::StartupModule()
 {
+	FString ShaderDir = FPaths::Combine(IPluginManager::Get().FindPlugin(TEXT("GlobalShaderTest"))->GetBaseDir(), TEXT("Shaders"));
+	AddShaderSourceDirectoryMapping(TEXT("/Plugin/GlobalShaderTest"), ShaderDir);
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 }
 
