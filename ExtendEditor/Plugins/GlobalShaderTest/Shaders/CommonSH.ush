@@ -1,0 +1,19 @@
+struct CommonLib
+{
+    float GetSliceTilling(float index, float4 input_a, float4 input_b)
+    {
+        float result = 0;
+        for (int i = 0; i < 8; i++)
+        {
+            if(index == i && index < 4)
+            {
+                result = input_a[i];
+            }
+            else if (index == i && index > 3)
+            {
+                result = input_b[i - 4];
+            }
+        }
+        return result;
+    }
+} S_CommonLib;

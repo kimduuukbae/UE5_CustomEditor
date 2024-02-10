@@ -1,0 +1,5 @@
+#include "CommonSH.ush"
+
+float result = S_CommonLib.GetSliceTilling(index, input_a, input_b);
+
+return result;
