@@ -46,4 +46,12 @@ public:
 	void SyncContentBrowser(const FString& AssetPath);
 
 #pragma endregion
+
+
+#pragma region SelectionLock
+
+	void InitCustomSelectionEvent();
+	void OnActorSelected(UObject* SelectedObject);
+
+#pragma endregion
 };

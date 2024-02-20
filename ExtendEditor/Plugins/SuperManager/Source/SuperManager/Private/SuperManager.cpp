@@ -8,6 +8,7 @@
 #include "AssetRegistryModule.h"
 #include "AssetToolsModule.h"
 #include "SlateWidgets/AdvanceDeletionWidget.h"
+#include "Engine/Selection.h"
 
 #define LOCTEXT_NAMESPACE "FSuperManagerModule"
 
@@ -15,13 +16,11 @@ void FSuperManagerModule::StartupModule()
 {
 	InitCBMenuExtention();
 	RegisterAdvanceDeletionTab();
-	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+	InitCustomSelectionEvent();
 }
 
 void FSuperManagerModule::ShutdownModule()
 {
-	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
-	// we call this function before unloading the module.
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(FName("AdvanceDeletion"));
 }
 
@@ -242,6 +241,25 @@ void FSuperManagerModule::SyncContentBrowser(const FString& AssetPath)
 	TArray<FString> AssetPathToSync{AssetPath};
 
 	UEditorAssetLibrary::SyncBrowserToObjects(AssetPathToSync);
+}
+
+#pragma endregion
+
+#pragma region SelectionLock
+
+void FSuperManagerModule::InitCustomSelectionEvent()
+{
+	USelection* UserSelection = GEditor->GetSelectedActors();
+
+	UserSelection->SelectObjectEvent.AddRaw(this, &FSuperManagerModule::OnActorSelected);
+}
+
+void FSuperManagerModule::OnActorSelected(UObject* SelectedObject)
+{
+	if (AActor* SelectedActor = Cast<AActor>(SelectedObject))
+	{
+		
+	}
 }
 
 #pragma endregion
