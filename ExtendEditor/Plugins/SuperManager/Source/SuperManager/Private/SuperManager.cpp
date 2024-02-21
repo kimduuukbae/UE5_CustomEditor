@@ -9,18 +9,26 @@
 #include "AssetToolsModule.h"
 #include "SlateWidgets/AdvanceDeletionWidget.h"
 #include "Engine/Selection.h"
+#include "CustomStyle/CustomSlateStyle.h"
+#include "SceneOutlinerModule.h"
+#include "CustomOutlinerColumn/OutlinerSelectionColumn.h"
 
 #define LOCTEXT_NAMESPACE "FSuperManagerModule"
 
 void FSuperManagerModule::StartupModule()
 {
+	FCustomSlateStyleManager::Initialize();
+
 	InitCBMenuExtention();
 	RegisterAdvanceDeletionTab();
 	InitCustomSelectionEvent();
+	InitSceneOutlinerColumnExtension();
 }
 
 void FSuperManagerModule::ShutdownModule()
 {
+	FCustomSlateStyleManager::Shutdown();
+
 	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(FName("AdvanceDeletion"));
 }
 
@@ -262,6 +270,23 @@ void FSuperManagerModule::OnActorSelected(UObject* SelectedObject)
 	}
 }
 
+#pragma endregion
+
+#pragma region SceneOutlinerExtension
+void FSuperManagerModule::InitSceneOutlinerColumnExtension()
+{
+	FSceneOutlinerModule& Module = FModuleManager::LoadModuleChecked<FSceneOutlinerModule>(TEXT("SceneOutliner"));
+
+	FSceneOutlinerColumnInfo LockInfo(
+		ESceneOutlinerColumnVisibility::Visible,
+		1,
+		FCreateSceneOutlinerColumn::CreateLambda([](ISceneOutliner& SceneOutliner) {
+			return MakeShareable(new FOutlinerSelectionLockColumn(SceneOutliner));
+		})
+	);
+
+	Module.RegisterDefaultColumnType<FOutlinerSelectionLockColumn>(LockInfo);
+}
 #pragma endregion
 
 #undef LOCTEXT_NAMESPACE

@@ -54,4 +54,9 @@ public:
 	void OnActorSelected(UObject* SelectedObject);
 
 #pragma endregion
+
+#pragma region SceneOutlinerExtension
+	void InitSceneOutlinerColumnExtension();
+#pragma endregion
+
 };
