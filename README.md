@@ -39,8 +39,6 @@ Added variable "bIsLocked" from "Actor.h"
 
 ![9](https://github.com/kimduuukbae/UE5_CustomEditor/assets/39338850/630628aa-4b5c-4ea4-8926-dadbe8f55aa5)
 
-"ActorTreeItem.cpp"에서 WorldOutliner Text 색상을 변경했습니다.
-
 Changed the WorldOutliner Text color in "ActorTreeItem.cpp"
 
 ### 4. Impl...
