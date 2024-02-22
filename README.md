@@ -23,4 +23,24 @@ You can choose the texture you want and quickly create the material.
 
 All Textures are automatically connected to Pin as long as the name conventions are followed.
 
-### 3. Impl...
+### 3. Level Actor Locking
+
+![7](https://github.com/kimduuukbae/UE5_CustomEditor/assets/39338850/ce299b29-cbf1-4177-89fc-acb51348897a)
+
+You can lock an Actor that exists in the Level.
+
+Locked Actor cannot be select(Cannot be Click).
+
+This function has modified the Engine Code.
+
+![8](https://github.com/kimduuukbae/UE5_CustomEditor/assets/39338850/22166567-eadf-49f9-a7b4-fba4411890fb)
+
+Added variable "bIsLocked" from "Actor.h"
+
+![9](https://github.com/kimduuukbae/UE5_CustomEditor/assets/39338850/630628aa-4b5c-4ea4-8926-dadbe8f55aa5)
+
+"ActorTreeItem.cpp"에서 WorldOutliner Text 색상을 변경했습니다.
+
+Changed the WorldOutliner Text color in "ActorTreeItem.cpp"
+
+### 4. Impl...
