@@ -50,13 +50,25 @@ public:
 
 #pragma region SelectionLock
 
+public:
 	void InitCustomSelectionEvent();
 	void OnActorSelected(UObject* SelectedObject);
+
+	void LockActor(AActor* Target);
+	void UnLockActor(AActor* Target);
+	
+private:
+	TWeakObjectPtr<class UEditorActorSubsystem> ActorSubsystem;
+	bool GetActorSubsystem();
 
 #pragma endregion
 
 #pragma region SceneOutlinerExtension
+public:
 	void InitSceneOutlinerColumnExtension();
+
 #pragma endregion
 
+	bool CheckIsActorLocked(AActor* Target);
+	void ProcessLockingForOutliner(AActor* Target, bool bLock);
 };

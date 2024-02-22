@@ -12,6 +12,7 @@
 #include "CustomStyle/CustomSlateStyle.h"
 #include "SceneOutlinerModule.h"
 #include "CustomOutlinerColumn/OutlinerSelectionColumn.h"
+#include "Subsystems/EditorActorSubsystem.h"
 
 #define LOCTEXT_NAMESPACE "FSuperManagerModule"
 
@@ -264,10 +265,55 @@ void FSuperManagerModule::InitCustomSelectionEvent()
 
 void FSuperManagerModule::OnActorSelected(UObject* SelectedObject)
 {
+	if (GetActorSubsystem() == false)
+	{
+		return;
+	}
+
 	if (AActor* SelectedActor = Cast<AActor>(SelectedObject))
 	{
-		
+		if (CheckIsActorLocked(SelectedActor))
+		{
+			// Deselect actor
+			ActorSubsystem->SetActorSelectionState(SelectedActor, false);
+		}
 	}
+}
+
+void FSuperManagerModule::LockActor(AActor* Target)
+{
+	if (Target == nullptr) 
+	{
+		return;
+	}
+
+	if (Target->bIsLocked == false)
+	{
+		Target->bIsLocked = true;
+	}
+}
+
+void FSuperManagerModule::UnLockActor(AActor* Target)
+{
+	if (Target == nullptr)
+	{
+		return;
+	}
+
+	if (Target->bIsLocked == true)
+	{
+		Target->bIsLocked = false;
+	}
+}
+
+bool FSuperManagerModule::GetActorSubsystem()
+{
+	if (ActorSubsystem.IsValid() == false)
+	{
+		ActorSubsystem = GEditor->GetEditorSubsystem<UEditorActorSubsystem>();
+	}
+
+	return ActorSubsystem.IsValid();
 }
 
 #pragma endregion
@@ -286,6 +332,33 @@ void FSuperManagerModule::InitSceneOutlinerColumnExtension()
 	);
 
 	Module.RegisterDefaultColumnType<FOutlinerSelectionLockColumn>(LockInfo);
+}
+bool FSuperManagerModule::CheckIsActorLocked(AActor* Target)
+{
+	return Target->bIsLocked;
+}
+void FSuperManagerModule::ProcessLockingForOutliner(AActor* Target, bool bLock)
+{
+	if (GetActorSubsystem() == false)
+	{
+		return;
+	}
+
+	if (bLock)
+	{
+		LockActor(Target);
+
+		ActorSubsystem->SetActorSelectionState(Target, false);
+
+		DebugHeader::ShowNotifyInfo(TEXT("Locked actor : \n") + Target->GetActorLabel());
+	}
+	else
+	{
+		UnLockActor(Target);
+
+		DebugHeader::ShowNotifyInfo(TEXT("Unlocked actor : \n") + Target->GetActorLabel());
+	}
+
 }
 #pragma endregion
 

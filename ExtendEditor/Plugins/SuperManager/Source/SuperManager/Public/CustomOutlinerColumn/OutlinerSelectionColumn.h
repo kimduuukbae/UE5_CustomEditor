@@ -19,4 +19,7 @@ public:
 	virtual const TSharedRef<SWidget> ConstructRowWidget(FSceneOutlinerTreeItemRef TreeItem, const STableRow<FSceneOutlinerTreeItemPtr>& Row) override;
 
 	static FName GetID() { return FName("SelectionLock"); }
+
+private:
+	void OnCheckBoxStateChanged(ECheckBoxState NewState, TWeakObjectPtr<AActor> Target);
 };
