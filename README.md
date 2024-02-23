@@ -41,8 +41,10 @@ Added variable "bIsLocked" from "Actor.h"
 
 Changed the WorldOutliner Text color in "ActorTreeItem.cpp"
 
-![image](https://github.com/kimduuukbae/UE5_CustomEditor/assets/39338850/82bf5fb2-bd26-4a5d-b38c-9a5fb0a3951d)
+![Honeycam 2024-02-23 20-32-55](https://github.com/kimduuukbae/UE5_CustomEditor/assets/39338850/ebd96deb-e559-48ad-b407-4a2e80a092f3)
 
 It's highlight in Outliner, but it doesn't move the Actor in Level.
+
+![image](https://github.com/kimduuukbae/UE5_CustomEditor/assets/39338850/82bf5fb2-bd26-4a5d-b38c-9a5fb0a3951d)
 
 ### 4. Impl...
