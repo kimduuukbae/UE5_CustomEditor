@@ -47,7 +47,7 @@ It's highlight in Outliner, but it doesn't move the Actor in Level.
 
 ![image](https://github.com/kimduuukbae/UE5_CustomEditor/assets/39338850/82bf5fb2-bd26-4a5d-b38c-9a5fb0a3951d)
 
-![1](https://github.com/kimduuukbae/UE5_CustomEditor/assets/39338850/30f95b95-edfb-4206-b551-262351f975e5)
+![1](https://github.com/kimduuukbae/UE5_CustomEditor/assets/39338850/c7d666b8-646f-455f-b092-b37cd9cb1866)
 
 You can right-click to lock after selecting the desired Actors.
 
