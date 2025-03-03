@@ -3,4 +3,18 @@
 #include "CustomLyra.h"
 #include "Modules/ModuleManager.h"
 
-IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, CustomLyra, "CustomLyra" );
+class FCLGameModule : public FDefaultGameModuleImpl
+{
+public:
+	virtual void StartupModule() override
+	{
+
+	}
+
+	virtual void ShutdownModule() override
+	{
+
+	}
+};
+
+IMPLEMENT_PRIMARY_GAME_MODULE(FCLGameModule, CustomLyra, "CustomLyra");
