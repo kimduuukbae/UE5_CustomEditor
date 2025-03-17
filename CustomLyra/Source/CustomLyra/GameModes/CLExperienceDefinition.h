@@ -18,6 +18,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	TObjectPtr<class UCLPawnData> DefaultPawnData = nullptr;
 
+	// 게임 모드에 따른 GameFeature Plugin을 로딩하는데, 이에 대한 연결고리다.
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	TArray<FString> GameFeaturesToEnable;
 };
