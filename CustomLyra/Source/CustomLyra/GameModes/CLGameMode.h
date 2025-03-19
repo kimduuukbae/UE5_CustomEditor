@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "CLGameMode.generated.h"
 
+class UCLExperienceDefinition;
+
 UCLASS()
 class CUSTOMLYRA_API ACLGameMode : public AGameModeBase
 {
@@ -13,5 +15,8 @@ class CUSTOMLYRA_API ACLGameMode : public AGameModeBase
 public:
 	ACLGameMode(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 
+	virtual void InitGameState() override;
 	virtual void StartPlay() override;
+
+	void OnExperienceLoaded(TObjectPtr<const UCLExperienceDefinition> InDefinition);
 };

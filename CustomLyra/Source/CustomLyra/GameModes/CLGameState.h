@@ -12,4 +12,7 @@ class ACLGameState : public AGameStateBase
 
 public:
 	ACLGameState(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
+
+	UPROPERTY()
+	TObjectPtr<UCLExperienceManagerComponent> ExperienceManagerComponent = nullptr;
 };
