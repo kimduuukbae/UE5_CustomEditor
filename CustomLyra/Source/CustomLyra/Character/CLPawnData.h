@@ -16,4 +16,7 @@ class CUSTOMLYRA_API UCLPawnData : public UPrimaryDataAsset
 	
 public:
 	UCLPawnData(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CL|Pawn")
+	TSubclassOf<APawn> PawnClass = nullptr;
 };

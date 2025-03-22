@@ -31,6 +31,35 @@ void ACLGameMode::StartPlay()
 
 }
 
+APawn* ACLGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform)
+{
+	return Super::SpawnDefaultPawnAtTransform_Implementation(NewPlayer, SpawnTransform);
+}
+
+void ACLGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
+{
+	if (IsExperienceLoaded() == true)
+	{
+		Super::HandleStartingNewPlayer_Implementation(NewPlayer);
+	}
+}
+
+bool ACLGameMode::IsExperienceLoaded() const
+{
+	if (IsValid(GameState) == false)
+	{
+		return false;
+	}
+
+	TObjectPtr<UCLExperienceManagerComponent> managerComponent = GameState->FindComponentByClass<UCLExperienceManagerComponent>();
+	if (IsValid(managerComponent) == false)
+	{
+		return false;
+	}
+
+	return managerComponent->IsExperienceLoaded();
+}
+
 void ACLGameMode::OnExperienceLoaded(TObjectPtr<const UCLExperienceDefinition> InDefinition)
 {
 

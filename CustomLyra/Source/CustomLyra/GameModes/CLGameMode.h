@@ -18,5 +18,10 @@ public:
 	virtual void InitGameState() override;
 	virtual void StartPlay() override;
 
+	virtual APawn* SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
+	
+	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer);
+
+	bool IsExperienceLoaded() const;
 	void OnExperienceLoaded(TObjectPtr<const UCLExperienceDefinition> InDefinition);
 };
