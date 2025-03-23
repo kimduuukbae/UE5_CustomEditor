@@ -22,10 +22,14 @@ class UCLExperienceManagerComponent : public UGameStateComponent
 
 public:
 	UCLExperienceManagerComponent(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
-
 	bool IsExperienceLoaded() { return LoadState == ECLExperienceLoadState::Loaded && CurrentExperience != nullptr; }
 
 	void CallOrRegister_OnExperienceLoaded(FCLOnExperienceLoaded::FDelegate&& InDelegate);
+
+	void ServerSetCurrentExperience(const FPrimaryAssetId& InExperienceId);
+	void StartExperienceLoad();
+	void OnExperienceLoadComplete();
+	void OnExperienceFullLoadComplete();
 private:
 	UPROPERTY()
 	TObjectPtr<const UCLExperienceDefinition> CurrentExperience = nullptr;

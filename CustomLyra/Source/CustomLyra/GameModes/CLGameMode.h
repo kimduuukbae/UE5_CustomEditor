@@ -22,6 +22,7 @@ public:
 	
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer);
 
+	void OnMatchAssignmentGiven(const FPrimaryAssetId& InExperienceId);
 	bool IsExperienceLoaded() const;
 	void OnExperienceLoaded(TObjectPtr<const UCLExperienceDefinition> InDefinition);
 };

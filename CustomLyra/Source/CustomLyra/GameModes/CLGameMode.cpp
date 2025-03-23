@@ -27,8 +27,22 @@ void ACLGameMode::StartPlay()
 {
 	Super::StartPlay();
 	// Lyra에서는 InitGame에서 해주고 있지만, 그건 Actor들의 PreInitializeComponents 가 불리기 전이라 그렇다.
+	// 즉, GameState, PlayerController, PlayerState도 만들어져야 하니까..
 	// 우리는 StartPlay 에서 초기화 해서 Actor들이 BeginPlay가 불리기 전에 세팅하자
 
+	FPrimaryAssetId experienceId;
+	TObjectPtr<UWorld> world = GetWorld();
+	if (IsValid(world) == false)
+	{
+		return;
+	}
+	
+	if (experienceId.IsValid() == false)
+	{
+		experienceId = FPrimaryAssetId(FPrimaryAssetType("CLExperienceDefinition"), FName(TEXT("B_CLDefaultExperience")));
+	}
+
+	OnMatchAssignmentGiven(experienceId);
 }
 
 APawn* ACLGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform)
@@ -42,6 +56,22 @@ void ACLGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewP
 	{
 		Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 	}
+}
+
+void ACLGameMode::OnMatchAssignmentGiven(const FPrimaryAssetId& InExperienceId)
+{
+	if (InExperienceId.IsValid() == false)
+	{
+		return;
+	}
+
+	TObjectPtr<UCLExperienceManagerComponent> experienceManagerComponent = GameState->FindComponentByClass<UCLExperienceManagerComponent>();
+	if (IsValid(experienceManagerComponent) == false)
+	{
+		return;
+	}
+
+	experienceManagerComponent->ServerSetCurrentExperience(InExperienceId);
 }
 
 bool ACLGameMode::IsExperienceLoaded() const
