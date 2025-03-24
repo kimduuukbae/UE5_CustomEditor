@@ -30,6 +30,8 @@ public:
 	void StartExperienceLoad();
 	void OnExperienceLoadComplete();
 	void OnExperienceFullLoadComplete();
+
+	TObjectPtr<const UCLExperienceDefinition> GetCurrentExperienceChecked();
 private:
 	UPROPERTY()
 	TObjectPtr<const UCLExperienceDefinition> CurrentExperience = nullptr;

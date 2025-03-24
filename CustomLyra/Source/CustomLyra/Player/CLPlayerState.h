@@ -1,9 +1,9 @@
 #pragma once
 
 #include "GameFramework/PlayerState.h"
+#include "CustomLyra/Character/CLPawnData.h"
 #include "CLPlayerState.generated.h"
 
-class UCLPawnData;
 class UCLExperienceDefinition;
 
 UCLASS()
@@ -16,6 +16,10 @@ public:
 
 	virtual void PostInitializeComponents() override;
 	void OnExperienceLoaded(TObjectPtr<const UCLExperienceDefinition> InDefinition);
+
+	void SetPawnData(TObjectPtr<const UCLPawnData> InPawnData);
+	template <typename T>
+	TObjectPtr<const T> GetPawnData() const {return Cast<const T>(PawnData); }
 
 	UPROPERTY()
 	TObjectPtr<const UCLPawnData> PawnData;

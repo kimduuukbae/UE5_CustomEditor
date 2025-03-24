@@ -114,3 +114,8 @@ void UCLExperienceManagerComponent::OnExperienceFullLoadComplete()
 	OnExperienceLoaded.Broadcast(CurrentExperience);
 	OnExperienceLoaded.Clear();
 }
+
+TObjectPtr<const UCLExperienceDefinition> UCLExperienceManagerComponent::GetCurrentExperienceChecked()
+{
+	return CurrentExperience;
+}

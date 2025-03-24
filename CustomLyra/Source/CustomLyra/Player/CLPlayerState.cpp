@@ -1,5 +1,6 @@
 #include "CLPlayerState.h"
 #include "CustomLyra/GameModes/CLExperienceManagerComponent.h"
+#include "CustomLyra/GameModes/CLGameMode.h"
 
 ACLPlayerState::ACLPlayerState(const FObjectInitializer& InObjectInitializer) : Super{InObjectInitializer}
 {
@@ -27,5 +28,15 @@ void ACLPlayerState::PostInitializeComponents()
 
 void ACLPlayerState::OnExperienceLoaded(TObjectPtr<const UCLExperienceDefinition> InDefinition)
 {
+	if (TObjectPtr<ACLGameMode> gameMode = GetWorld()->GetAuthGameMode<ACLGameMode>())
+	{
+		const UCLPawnData* newPawnData = gameMode->GetPawnDataForController(GetOwningController());
 
+		SetPawnData(newPawnData);
+	}
+}
+
+void ACLPlayerState::SetPawnData(TObjectPtr<const UCLPawnData> InPawnData)
+{
+	PawnData = InPawnData;
 }

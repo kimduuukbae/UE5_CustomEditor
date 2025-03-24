@@ -3,6 +3,7 @@
 #include "CLGameMode.h"
 #include "CLGameState.h"
 #include "CLExperienceManagerComponent.h"
+#include "CLExperienceDefinition.h"
 #include "CustomLyra/Player/CLPlayerController.h"
 #include "CustomLyra/Player/CLPlayerState.h"
 #include "CustomLyra/Character/CLCharacter.h" 
@@ -58,6 +59,19 @@ void ACLGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewP
 	}
 }
 
+UClass* ACLGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
+{
+	if (const UCLPawnData* pawnData = GetPawnDataForController(InController))
+	{
+		if (pawnData->PawnClass)
+		{
+			return pawnData->PawnClass;
+		}
+	}
+
+	return Super::GetDefaultPawnClassForController_Implementation(InController);
+}
+
 void ACLGameMode::OnMatchAssignmentGiven(const FPrimaryAssetId& InExperienceId)
 {
 	if (InExperienceId.IsValid() == false)
@@ -90,7 +104,44 @@ bool ACLGameMode::IsExperienceLoaded() const
 	return managerComponent->IsExperienceLoaded();
 }
 
+TObjectPtr<const UCLPawnData> ACLGameMode::GetPawnDataForController(TObjectPtr<const AController> InController)
+{
+	if (IsValid(InController) == true)
+	{
+		if (TObjectPtr<const ACLPlayerState> playerState = InController->GetPlayerState<ACLPlayerState>())
+		{
+			if (TObjectPtr<const UCLPawnData> pawnData = playerState->GetPawnData<UCLPawnData>())
+			{
+				return pawnData;
+			}
+		}
+	}
+
+	TObjectPtr<UCLExperienceManagerComponent> managerComponent = GameState->FindComponentByClass<UCLExperienceManagerComponent>();
+	if (managerComponent->IsExperienceLoaded() == true)
+	{
+		TObjectPtr<const UCLExperienceDefinition> experience = managerComponent->GetCurrentExperienceChecked();
+		if (experience->DefaultPawnData)
+		{
+			return experience->DefaultPawnData;
+		}
+	}
+
+	return nullptr;
+}
+
 void ACLGameMode::OnExperienceLoaded(TObjectPtr<const UCLExperienceDefinition> InDefinition)
 {
+	for (FConstPlayerControllerIterator iter = GetWorld()->GetPlayerControllerIterator(); iter; ++iter)
+	{
+		TObjectPtr<APlayerController> controller = Cast<APlayerController>(*iter);
 
+		if (IsValid(controller) == true && controller->GetPawn() == nullptr)
+		{
+			if (PlayerCanRestart(controller) == true)
+			{
+				RestartPlayer(controller);
+			}
+		}
+	}
 }

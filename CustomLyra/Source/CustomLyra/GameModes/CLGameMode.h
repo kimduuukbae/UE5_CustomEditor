@@ -7,6 +7,7 @@
 #include "CLGameMode.generated.h"
 
 class UCLExperienceDefinition;
+class UCLPawnData;
 
 UCLASS()
 class CUSTOMLYRA_API ACLGameMode : public AGameModeBase
@@ -19,10 +20,12 @@ public:
 	virtual void StartPlay() override;
 
 	virtual APawn* SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
-	
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer);
+	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+
 
 	void OnMatchAssignmentGiven(const FPrimaryAssetId& InExperienceId);
 	bool IsExperienceLoaded() const;
 	void OnExperienceLoaded(TObjectPtr<const UCLExperienceDefinition> InDefinition);
+	TObjectPtr<const UCLPawnData> GetPawnDataForController(TObjectPtr<const AController> InController);
 };
