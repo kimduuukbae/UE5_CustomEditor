@@ -1,5 +1,6 @@
 #include "CLAssetManager.h"
 #include "CustomLyra/CLLogChannels.h"
+#include "CustomLyra/CLGameplayTags.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CLAssetManager)
 
 UCLAssetManager::UCLAssetManager() : Super()
@@ -64,4 +65,6 @@ TObjectPtr<UObject> UCLAssetManager::SynchronousLoadAsset(const FSoftObjectPath&
 void UCLAssetManager::StartInitialLoading()
 {
 	Super::StartInitialLoading();
+
+	FCLGameplayTags::InitailizeNativeTags();
 }
