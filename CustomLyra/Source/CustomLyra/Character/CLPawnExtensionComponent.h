@@ -4,6 +4,8 @@
 #include "Components/PawnComponent.h"
 #include "CLPawnExtensionComponent.generated.h"
 
+class UCLPawnData;
+
 UCLASS()
 class UCLPawnExtensionComponent : public UPawnComponent, public IGameFrameworkInitStateInterface
 {
@@ -11,6 +13,13 @@ class UCLPawnExtensionComponent : public UPawnComponent, public IGameFrameworkIn
 
 public:
 	UCLPawnExtensionComponent(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
+
+	static TObjectPtr<UCLPawnExtensionComponent> FindPawnExtensionComponent(const TObjectPtr<AActor> InActor)
+	{
+		return (IsValid(InActor) ? InActor->FindComponentByClass<UCLPawnExtensionComponent>() : nullptr);
+	}
+
+	void SetPawnData(TObjectPtr<const UCLPawnData> InPawnData);
 
 	virtual void OnRegister() override;
 	virtual void BeginPlay() override;
@@ -22,4 +31,8 @@ public:
 	virtual void OnActorInitStateChanged(const FActorInitStateChangedParams& Params) override;
 	virtual bool CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) const override;
 	virtual void CheckDefaultInitialization() override;
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "CL|Pawn")
+	TObjectPtr<const UCLPawnData> PawnData;
 };

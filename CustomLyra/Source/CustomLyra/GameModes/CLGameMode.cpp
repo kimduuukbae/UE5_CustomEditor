@@ -7,6 +7,7 @@
 #include "CustomLyra/Player/CLPlayerController.h"
 #include "CustomLyra/Player/CLPlayerState.h"
 #include "CustomLyra/Character/CLCharacter.h" 
+#include "CustomLyra/Character/CLPawnExtensionComponent.h"
 
 ACLGameMode::ACLGameMode(const FObjectInitializer& InObjectInitializer) : Super{InObjectInitializer}
 {
@@ -48,7 +49,28 @@ void ACLGameMode::StartPlay()
 
 APawn* ACLGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform)
 {
-	return Super::SpawnDefaultPawnAtTransform_Implementation(NewPlayer, SpawnTransform);
+	FActorSpawnParameters spawnInfo;
+	spawnInfo.Instigator = GetInstigator();
+	spawnInfo.ObjectFlags |= RF_Transient;
+	spawnInfo.bDeferConstruction = true;
+
+	if (TObjectPtr<UClass> pawnClass = GetDefaultPawnClassForController(NewPlayer))
+	{
+		if (TObjectPtr<APawn> spawnedPawn = GetWorld()->SpawnActor<APawn>(pawnClass, SpawnTransform, spawnInfo))
+		{
+			if (TObjectPtr<UCLPawnExtensionComponent> extensionComponent = UCLPawnExtensionComponent::FindPawnExtensionComponent(spawnedPawn))
+			{
+				if (TObjectPtr<const UCLPawnData> pawnData = GetPawnDataForController(NewPlayer))
+				{
+					extensionComponent->SetPawnData(pawnData);
+				}
+			}
+			spawnedPawn->FinishSpawning(SpawnTransform);
+			return spawnedPawn;
+		}
+	}
+
+	return nullptr;
 }
 
 void ACLGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
