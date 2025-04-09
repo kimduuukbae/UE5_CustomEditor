@@ -8,3 +8,10 @@ ACLCharacter::ACLCharacter(const FObjectInitializer& InObjectInitilaizer) : Supe
 
 	PawnExtensionComponent = CreateDefaultSubobject<UCLPawnExtensionComponent>(TEXT("PawnExtensionComponent"));
 }
+
+void ACLCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PawnExtensionComponent->SetupPlayerInputComponent();
+}

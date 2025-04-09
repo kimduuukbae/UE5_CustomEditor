@@ -102,4 +102,30 @@ bool UCLHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Manage
 
 void UCLHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState)
 {
+	const FCLGameplayTags& initTags = FCLGameplayTags::Get();
+	
+	if (CurrentState == initTags.InitState_DataAvailable && DesiredState == initTags.InitState_DataInitialized)
+	{
+		TObjectPtr<APawn> pawn = GetPawn<APawn>();
+		ACLPlayerState* playerState = GetPlayerState<ACLPlayerState>();
+		if (IsValid(pawn) == false || IsValid(playerState) == false)
+		{
+			return;
+		}
+
+		/*const bool bIsLocallyControlled = pawn->IsLocallyControlled();
+		TObjectPtr<const UCLPawnData> pawnData = nullptr;
+		if (TObjectPtr<UCLPawnExtensionComponent> pawnExtensionComponent = UCLPawnExtensionComponent::FindPawnExtensionComponent(pawn))
+		{
+			pawnData = pawnExtensionComponent->GetPawnData<UCLPawnData>();
+		}
+
+		if (bIsLocallyControlled == true && IsValid(pawnData) == true)
+		{
+			if (TObjectPtr<UCLCameraComponent> cameraComponent = UCLCameraComponent::FindCameraComponent(pawn))
+			{
+				cameraComponent->DetermineCameraModeDelegate.BindUObject(this, &UCLHeroComponent::DetermineCameraMode);
+			}
+		}*/
+	}
 }

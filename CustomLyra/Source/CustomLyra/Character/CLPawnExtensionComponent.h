@@ -32,6 +32,8 @@ public:
 	virtual bool CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) const override;
 	virtual void CheckDefaultInitialization() override;
 
+	void SetupPlayerInputComponent();
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "CL|Pawn")
 	TObjectPtr<const UCLPawnData> PawnData;

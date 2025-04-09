@@ -13,6 +13,8 @@ class ACLCharacter : public ACharacter
 public:
 	ACLCharacter(const FObjectInitializer& InObjectInitilaizer = FObjectInitializer::Get());
 
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CL|Character")
 	TObjectPtr<UCLPawnExtensionComponent> PawnExtensionComponent;
 };

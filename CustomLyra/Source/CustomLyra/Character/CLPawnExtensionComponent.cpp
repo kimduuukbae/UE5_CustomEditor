@@ -150,3 +150,8 @@ void UCLPawnExtensionComponent::CheckDefaultInitialization()
 
 	ContinueInitStateChain(stateChain);
 }
+
+void UCLPawnExtensionComponent::SetupPlayerInputComponent()
+{
+	CheckDefaultInitialization();
+}
