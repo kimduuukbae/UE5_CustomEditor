@@ -4,6 +4,7 @@
 #include "CLCharacter.generated.h"
 
 class UCLPawnExtensionComponent;
+class UCLCameraComponent;
 
 UCLASS()
 class ACLCharacter : public ACharacter
@@ -17,4 +18,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CL|Character")
 	TObjectPtr<UCLPawnExtensionComponent> PawnExtensionComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CL|Character")
+	TObjectPtr<UCLCameraComponent> CameraComponent;
 };
