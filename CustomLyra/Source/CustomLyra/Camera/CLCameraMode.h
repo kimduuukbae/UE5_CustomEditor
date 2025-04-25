@@ -2,6 +2,16 @@
 
 #include "CLCameraMode.generated.h"
 
+UCLASS(Abstract)
+class UCLCameraMode : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	UCLCameraMode(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
+
+};
+
 UCLASS()
 class UCLCameraModeStack : public UObject
 {

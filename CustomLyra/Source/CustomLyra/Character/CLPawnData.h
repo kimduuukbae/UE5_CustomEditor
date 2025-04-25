@@ -6,9 +6,6 @@
 #include "Engine/DataAsset.h"
 #include "CLPawnData.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class CUSTOMLYRA_API UCLPawnData : public UPrimaryDataAsset
 {
@@ -19,4 +16,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CL|Pawn")
 	TSubclassOf<APawn> PawnClass = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CL|Pawn")
+	TSubclassOf<UCLCameraMode> DefaultCameraMode = nullptr;
 };

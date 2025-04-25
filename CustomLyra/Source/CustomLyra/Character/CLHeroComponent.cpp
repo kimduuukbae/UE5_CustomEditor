@@ -2,6 +2,8 @@
 #include "CLPawnExtensionComponent.h"
 #include "CustomLyra/CLGameplayTags.h"
 #include "CustomLyra/Player/CLPlayerState.h"
+#include "CustomLyra/Character/CLPawnData.h"
+#include "CustomLyra/Camera/CLCameraComponent.h"
 #include "Components/GameFrameworkComponentManager.h"
 
 const FName UCLHeroComponent::NAME_HeroFeatureName("Hero");
@@ -113,7 +115,7 @@ void UCLHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Man
 			return;
 		}
 
-		/*const bool bIsLocallyControlled = pawn->IsLocallyControlled();
+		const bool bIsLocallyControlled = pawn->IsLocallyControlled();
 		TObjectPtr<const UCLPawnData> pawnData = nullptr;
 		if (TObjectPtr<UCLPawnExtensionComponent> pawnExtensionComponent = UCLPawnExtensionComponent::FindPawnExtensionComponent(pawn))
 		{
@@ -126,6 +128,25 @@ void UCLHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Man
 			{
 				cameraComponent->DetermineCameraModeDelegate.BindUObject(this, &UCLHeroComponent::DetermineCameraMode);
 			}
-		}*/
+		}
 	}
+}
+
+TSubclassOf<UCLCameraMode> UCLHeroComponent::DetermineCameraMode() const
+{
+	TObjectPtr<APawn> pawn = GetPawn<APawn>();
+	if (IsValid(pawn) == false)
+	{
+		return nullptr;
+	}
+
+	if (TObjectPtr<UCLPawnExtensionComponent> pawnExtensionComponent = UCLPawnExtensionComponent::FindPawnExtensionComponent(pawn))
+	{
+		if (TObjectPtr<const UCLPawnData> pawnData = pawnExtensionComponent->GetPawnData<UCLPawnData>())
+		{
+			return pawnData->DefaultCameraMode;
+		}
+	}
+
+	return nullptr;
 }

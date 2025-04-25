@@ -20,6 +20,8 @@ public:
 	}
 
 	void SetPawnData(TObjectPtr<const UCLPawnData> InPawnData);
+	template <typename T>
+	TObjectPtr<const T> GetPawnData() const { return Cast<T>(PawnData); }
 
 	virtual void OnRegister() override;
 	virtual void BeginPlay() override;

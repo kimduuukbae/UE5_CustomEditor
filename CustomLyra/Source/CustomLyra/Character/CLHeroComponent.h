@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Components/PawnComponent.h"
 #include "Components/GameFrameworkInitStateInterface.h"
 #include "CLHeroComponent.generated.h"
@@ -20,4 +22,6 @@ public:
 	virtual void OnActorInitStateChanged(const FActorInitStateChangedParams& InParam) override;
 	virtual bool CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) const override;
 	virtual void HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) override;
+
+	TSubclassOf<UCLCameraMode> DetermineCameraMode() const;
 };
