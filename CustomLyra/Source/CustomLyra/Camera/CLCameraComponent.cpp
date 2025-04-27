@@ -28,7 +28,7 @@ void UCLCameraComponent::UpdateCameraModes()
 	{
 		if (const TSubclassOf<UCLCameraMode> cameraMode = DetermineCameraModeDelegate.Execute())
 		{
-
+			CameraModeStack->PushCameraMode(cameraMode);
 		}
 	}
 }

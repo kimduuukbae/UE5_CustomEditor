@@ -19,6 +19,8 @@ class UCLCameraModeStack : public UObject
 public:
 	UCLCameraModeStack(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 
+	TObjectPtr<UCLCameraMode> GetCameraModeInstance(TSubclassOf<UCLCameraMode>& InCameraModeClass);
+	void PushCameraMode(TSubclassOf<UCLCameraMode>& InCameraModeClass);
 private:
 	UPROPERTY()
 	TArray<TObjectPtr<UCLCameraMode>> CameraModeInstances;
