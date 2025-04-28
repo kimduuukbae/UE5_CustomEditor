@@ -37,4 +37,39 @@ void UCLCameraModeStack::PushCameraMode(TSubclassOf<UCLCameraMode>& InCameraMode
     }
 
     TObjectPtr<UCLCameraMode> cameraMode = GetCameraModeInstance(InCameraModeClass);
+
+    int32 stackSize = CameraModeStack.Num();
+    if (stackSize > 0 && CameraModeStack[0] == cameraMode)
+    {
+        return;
+    }
+
+    int32 existingStackIndex = INDEX_NONE;
+    float existingStackContribution = 1.0f;
+
+    for (int32 stackIndex = 0; stackIndex < stackSize; ++stackIndex)
+    {
+        if (CameraModeStack[stackIndex] == cameraMode)
+        {
+            existingStackIndex = stackIndex;
+            existingStackContribution *= cameraMode->BlendWeight;
+        }
+        else
+        {
+            existingStackContribution *= (1.0f - CameraModeStack[stackIndex]->BlendWeight);
+        }
+    }
+
+    if (existingStackIndex != INDEX_NONE)
+    {
+        CameraModeStack.RemoveAt(existingStackIndex);
+        --stackSize;
+    }
+
+    bool bShouldBlend = cameraMode->BlendTime > 0.0f && stackSize > 0;
+    float blendWeight = bShouldBlend ? existingStackContribution : 1.0f;
+    cameraMode->BlendWeight = blendWeight;
+
+    CameraModeStack.Insert(cameraMode, 0);
+    CameraModeStack.Last()->BlendWeight = 1.0f;
 }
