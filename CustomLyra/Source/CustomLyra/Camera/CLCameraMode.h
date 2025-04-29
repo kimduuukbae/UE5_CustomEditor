@@ -10,6 +10,10 @@ class UCLCameraMode : public UObject
 public:
 	UCLCameraMode(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 
+private:
+
+	UPROPERTY(EditAnywhere, Category = "Blending")
+	float BlendTime = 1.0f;
 };
 
 UCLASS()
