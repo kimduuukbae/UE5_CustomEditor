@@ -10,10 +10,14 @@ class UCLCameraMode : public UObject
 public:
 	UCLCameraMode(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 
-private:
+public:
 
 	UPROPERTY(EditAnywhere, Category = "Blending")
 	float BlendTime = 1.0f;
+	UPROPERTY(EditAnywhere, Category = "Blending")
+	float BlendAlpha = 0.0f;
+	UPROPERTY(EditAnywhere, Category = "Blending")
+	float BlendWeight = 1.0f;
 };
 
 UCLASS()
@@ -23,8 +27,8 @@ class UCLCameraModeStack : public UObject
 public:
 	UCLCameraModeStack(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 
-	TObjectPtr<UCLCameraMode> GetCameraModeInstance(TSubclassOf<UCLCameraMode>& InCameraModeClass);
-	void PushCameraMode(TSubclassOf<UCLCameraMode>& InCameraModeClass);
+	TObjectPtr<UCLCameraMode> GetCameraModeInstance(const TSubclassOf<UCLCameraMode>& InCameraModeClass);
+	void PushCameraMode(const TSubclassOf<UCLCameraMode>& InCameraModeClass);
 private:
 	UPROPERTY()
 	TArray<TObjectPtr<UCLCameraMode>> CameraModeInstances;

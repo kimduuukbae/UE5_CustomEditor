@@ -8,11 +8,11 @@ UCLCameraModeStack::UCLCameraModeStack(const FObjectInitializer& InObjectInitial
 {
 }
 
-TObjectPtr<UCLCameraMode> UCLCameraModeStack::GetCameraModeInstance(TSubclassOf<UCLCameraMode>& InCameraModeClass)
+TObjectPtr<UCLCameraMode> UCLCameraModeStack::GetCameraModeInstance(const TSubclassOf<UCLCameraMode>& InCameraModeClass)
 {
     if (IsValid(InCameraModeClass) == false)
     {
-        return;
+        return nullptr;
     }
 
     for (TObjectPtr<UCLCameraMode> cameraMode : CameraModeInstances)
@@ -29,7 +29,7 @@ TObjectPtr<UCLCameraMode> UCLCameraModeStack::GetCameraModeInstance(TSubclassOf<
     return newCameraMode;
 }
 
-void UCLCameraModeStack::PushCameraMode(TSubclassOf<UCLCameraMode>& InCameraModeClass)
+void UCLCameraModeStack::PushCameraMode(const TSubclassOf<UCLCameraMode>& InCameraModeClass)
 {
     if (IsValid(InCameraModeClass) == false)
     {
