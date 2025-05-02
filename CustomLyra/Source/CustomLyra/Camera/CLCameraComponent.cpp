@@ -7,6 +7,11 @@ UCLCameraComponent::UCLCameraComponent(const FObjectInitializer& InObjectInitial
 {
 }
 
+TObjectPtr<AActor> UCLCameraComponent::GetTargetActor() const
+{
+	return GetOwner();
+}
+
 void UCLCameraComponent::OnRegister()
 {
 	Super::OnRegister();
@@ -20,6 +25,9 @@ void UCLCameraComponent::OnRegister()
 void UCLCameraComponent::GetCameraView(float InDeltaTime, FMinimalViewInfo& DesiredView)
 {
 	UpdateCameraModes();
+
+	FCLCameraModeView cameraModeView;
+	CameraModeStack->EvaluateStack(InDeltaTime, cameraModeView);
 }
 
 void UCLCameraComponent::UpdateCameraModes()

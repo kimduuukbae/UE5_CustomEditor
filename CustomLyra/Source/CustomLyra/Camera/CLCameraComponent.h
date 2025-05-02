@@ -18,6 +18,8 @@ public:
 	UCLCameraComponent(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 
 	static TObjectPtr<UCLCameraComponent> FindCameraComponent(TObjectPtr<const AActor> InActor) { return IsValid(InActor) == true ? InActor->FindComponentByClass<UCLCameraComponent>() : nullptr; }
+	
+	TObjectPtr<AActor> GetTargetActor() const;
 
 	virtual void OnRegister() override;
 	virtual void GetCameraView(float InDeltaTime, FMinimalViewInfo& DesiredView) override;
