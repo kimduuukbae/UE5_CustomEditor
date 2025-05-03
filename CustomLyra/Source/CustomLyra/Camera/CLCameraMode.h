@@ -37,13 +37,13 @@ public:
 	UCLCameraMode(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 	void UpdateCameraMode(float InDeltaTime);
 
-private:
+protected:
 	TObjectPtr<UCLCameraComponent> GetCameraComponent() const;
 	TObjectPtr<AActor> GetTargetActor() const;
 	FVector GetPivotLocation() const;
 	FRotator GetPivotRotation() const;
 
-	void UpdateView(float InDeltaTime);
+	virtual void UpdateView(float InDeltaTime);
 	void UpdateBlending(float InDeltaTime);
 
 public:

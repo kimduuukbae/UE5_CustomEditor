@@ -13,6 +13,26 @@ FCLCameraModeView::FCLCameraModeView() :
 
 void FCLCameraModeView::Blend(const FCLCameraModeView& InView, float Weight)
 {
+    if (Weight <= 0.0f)
+    {
+        return;
+    }
+    else if (Weight >= 1.0f)
+    {
+        // 1.0f 보다 커지면, 항상 내가 최신으로 지정되어야 한다.
+        // 즉 이 전까지의 블렌딩은 무효화 시켜야함
+        *this = InView;
+        return;
+    }
+
+    Location = FMath::Lerp(Location, InView.Location, Weight);
+    FRotator deltaRotation = (InView.Rotation - Rotation).GetNormalized();
+    Rotation = Rotation + (Weight * deltaRotation);
+
+    FRotator deltaControlRotation = (InView.ControlRotation - ControlRotation).GetNormalized();
+    ControlRotation = ControlRotation + (Weight * deltaControlRotation);
+
+    FieldOfView = FMath::Lerp(FieldOfView, InView.FieldOfView, Weight);
 }
 
 #pragma endregion
@@ -222,4 +242,22 @@ void UCLCameraModeStack::UpdateStack(float InDeltaTime)
 
 void UCLCameraModeStack::BlendStack(FCLCameraModeView& OutCameraModeView) const
 {
+    const int32 stackSize = CameraModeStack.Num();
+    if (stackSize <= 0)
+    {
+        return;
+    }
+
+    TObjectPtr<const UCLCameraMode> cameraMode = CameraModeStack[stackSize - 1];
+
+    OutCameraModeView = cameraMode->View;
+
+
+    // 맨 뒤부터 시작한다. 맨 앞에 있는것이 가장 최근에 들어왔을거고
+    // 맨 뒤에 있는 것이 deltaTime이 가장 크게 누적됐을것이기 때문에 그녀석을 기준으로 블렌딩을 시켜준다.
+    for (int32 stackIndex = stackSize - 2; stackIndex >= 0; --stackIndex)
+    {
+        cameraMode = CameraModeStack[stackIndex];
+        OutCameraModeView.Blend(cameraMode->View, cameraMode->BlendWeight);
+    }
 }
