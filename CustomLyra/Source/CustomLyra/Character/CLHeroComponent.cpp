@@ -1,9 +1,13 @@
 #include "CLHeroComponent.h"
 #include "CLPawnExtensionComponent.h"
+#include "EnhancedInputSubsystems.h"
 #include "CustomLyra/CLGameplayTags.h"
 #include "CustomLyra/Player/CLPlayerState.h"
+#include "CustomLyra/Player/CLPlayerController.h"
 #include "CustomLyra/Character/CLPawnData.h"
 #include "CustomLyra/Camera/CLCameraComponent.h"
+#include "CustomLyra/Input/CLMappableConfigPair.h"
+#include "CustomLyra/Input/CLInputComponent.h"
 #include "Components/GameFrameworkComponentManager.h"
 
 const FName UCLHeroComponent::NAME_HeroFeatureName("Hero");
@@ -129,6 +133,15 @@ void UCLHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Man
 				cameraComponent->DetermineCameraModeDelegate.BindUObject(this, &UCLHeroComponent::DetermineCameraMode);
 			}
 		}
+
+
+		if (TObjectPtr<ACLPlayerController> CLPlayerController = GetController<ACLPlayerController>())
+		{
+			if (IsValid(pawn->InputComponent) == true)
+			{
+				InitializePlayerInput(pawn->InputComponent);
+			}
+		}
 	}
 }
 
@@ -149,4 +162,113 @@ TSubclassOf<UCLCameraMode> UCLHeroComponent::DetermineCameraMode() const
 	}
 
 	return nullptr;
+}
+
+void UCLHeroComponent::InitializePlayerInput(TObjectPtr<UInputComponent> InInputComponent)
+{
+	TObjectPtr<APawn> pawn = GetPawn<APawn>();
+	if (IsValid(pawn) == false)
+	{
+		return;
+	}
+
+	TObjectPtr<const APlayerController> controller = GetController<APlayerController>();
+	if (IsValid(controller) == false)
+	{
+		return;
+	}
+
+	TObjectPtr<const ULocalPlayer> localPlayer = controller->GetLocalPlayer();
+	if (IsValid(localPlayer) == false)
+	{
+		return;
+	}
+
+	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> subSystem = localPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	if (IsValid(subSystem) == false)
+	{
+		return;
+	}
+
+	subSystem->ClearAllMappings();
+
+	// ConfigData를 PawnData에 있었고, PawnData는 PawnExtensionComponent의 Experience에 지정되어 있으니
+	if (TObjectPtr<const UCLPawnExtensionComponent> pawnExtensionComponent = UCLPawnExtensionComponent::FindPawnExtensionComponent(pawn))
+	{
+		if (TObjectPtr<const UCLPawnData> pawnData = pawnExtensionComponent->GetPawnData<UCLPawnData>())
+		{
+			if (TObjectPtr<const UCLInputConfig> inputConfig = pawnData->InputConfig)
+			{
+				const FCLGameplayTags& gameplayTags = FCLGameplayTags::Get();
+
+				for (const FCLMappableConfigPair& pair : DefaultInputConfigs)
+				{
+					if (pair.bShouldActivateAutomatically == true)
+					{
+						FModifyContextOptions options{};
+						options.bIgnoreAllPressedKeysUntilRelease = false;
+
+						subSystem->AddPlayerMappableConfig(pair.Config.LoadSynchronous(), options);
+					}
+				}
+
+				TObjectPtr<UCLInputComponent> inputComponent = CastChecked<UCLInputComponent>(InInputComponent);
+				if (IsValid(inputComponent) == true)
+				{
+					inputComponent->BindNativeAction(inputConfig, gameplayTags.InputTag_Move, ETriggerEvent::Triggered, this, &UCLHeroComponent::Input_Move);
+					inputComponent->BindNativeAction(inputConfig, gameplayTags.InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &UCLHeroComponent::Input_LookMouse);
+				}
+			}
+		}
+	}
+}
+
+void UCLHeroComponent::Input_Move(const FInputActionValue& InputActionValue)
+{
+	TObjectPtr<APawn> pawn = GetPawn<APawn>();
+	if (IsValid(pawn) == false)
+	{
+		return;
+	}
+
+	TObjectPtr<AController> controller = pawn->GetController();
+	if (IsValid(controller) == false)
+	{
+		return;
+	}
+
+	FVector2D value = InputActionValue.Get<FVector2D>();
+	FRotator movementRotation(0.0f, controller->GetControlRotation().Yaw, 0.0f);
+
+	if (FMath::IsNearlyZero(value.X) == false)
+	{
+		FVector movementDirection = movementRotation.RotateVector(FVector::RightVector);
+		pawn->AddMovementInput(movementDirection, value.X);
+	}
+	
+	if (FMath::IsNearlyZero(value.Y) == false)
+	{
+		FVector movementDirection = movementRotation.RotateVector(FVector::ForwardVector);
+		pawn->AddMovementInput(movementDirection, value.Y);
+	}
+}
+
+void UCLHeroComponent::Input_LookMouse(const FInputActionValue& InputActionValue)
+{
+	TObjectPtr<APawn> pawn = GetPawn<APawn>();
+	if (IsValid(pawn) == false)
+	{
+		return;
+	}
+
+	const FVector2D value = InputActionValue.Get<FVector2D>();
+	if (FMath::IsNearlyZero(value.X) == false)
+	{
+		pawn->AddControllerYawInput(value.X);
+	}
+
+	if (FMath::IsNearlyZero(value.Y) == false)
+	{
+		pawn->AddControllerPitchInput(-value.Y);
+	}
 }

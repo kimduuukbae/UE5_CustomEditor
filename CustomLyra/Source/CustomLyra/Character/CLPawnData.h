@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "CustomLyra/Input/CLInputConfig.h"
 #include "CLPawnData.generated.h"
+
 
 UCLASS()
 class CUSTOMLYRA_API UCLPawnData : public UPrimaryDataAsset
@@ -19,4 +21,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CL|Pawn")
 	TSubclassOf<UCLCameraMode> DefaultCameraMode = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CL|InputConfig")
+	TObjectPtr<UCLInputConfig> InputConfig;
 };

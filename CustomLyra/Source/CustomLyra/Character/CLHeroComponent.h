@@ -4,7 +4,11 @@
 #include "Components/GameFrameworkInitStateInterface.h"
 #include "CLHeroComponent.generated.h"
 
-UCLASS(Blueprintable, Meta=(BlueprintSpawnableComponent))
+struct FCLMappableConfigPair;
+class UInputComponent;
+struct FInputActionValue;
+
+UCLASS(Blueprintable, meta=(BlueprintSpawnableComponent))
 class UCLHeroComponent : public UPawnComponent, public IGameFrameworkInitStateInterface
 {
 	GENERATED_BODY()
@@ -24,4 +28,12 @@ public:
 	virtual void HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) override;
 
 	TSubclassOf<UCLCameraMode> DetermineCameraMode() const;
+	void InitializePlayerInput(TObjectPtr<UInputComponent> InInputComponent);
+
+	void Input_Move(const FInputActionValue& InputActionValue);
+	void Input_LookMouse(const FInputActionValue& InputActionValue);
+
+private:
+	UPROPERTY(EditAnywhere)
+	TArray<FCLMappableConfigPair> DefaultInputConfigs;
 };
