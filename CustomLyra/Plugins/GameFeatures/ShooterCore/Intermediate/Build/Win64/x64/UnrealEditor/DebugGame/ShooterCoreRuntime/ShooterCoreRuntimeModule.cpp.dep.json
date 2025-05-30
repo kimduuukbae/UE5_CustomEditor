@@ -1,0 +1,14 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\repository\\ue5_customeditor\\customlyra\\plugins\\gamefeatures\\shootercore\\source\\shootercoreruntime\\private\\shootercoreruntimemodule.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\ue52\\unrealengine-5.2\\engine\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\engine\\sharedpch.engine.nonoptimized.shadowerrors.inclorderunreal5_1.h.pch",
+        "Includes": [
+            "d:\\repository\\ue5_customeditor\\customlyra\\plugins\\gamefeatures\\shootercore\\intermediate\\build\\win64\\x64\\unrealeditor\\debuggame\\shootercoreruntime\\definitions.shootercoreruntime.h",
+            "d:\\repository\\ue5_customeditor\\customlyra\\plugins\\gamefeatures\\shootercore\\source\\shootercoreruntime\\public\\shootercoreruntimemodule.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

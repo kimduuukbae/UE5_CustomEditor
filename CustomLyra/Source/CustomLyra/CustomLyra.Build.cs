@@ -18,6 +18,7 @@ public class CustomLyra : ModuleRules
 			"GameFeatures",
 			"InputCore",
 			"EnhancedInput",
+			"CommonUser",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
