@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "CustomLyra/Input/CLInputConfig.h"
+#include "CustomLyra/Camera/CLCameraMode.h"
 #include "CLPawnData.generated.h"
-
 
 UCLASS()
 class CUSTOMLYRA_API UCLPawnData : public UPrimaryDataAsset

@@ -8,6 +8,7 @@
 #include "CustomLyra/Player/CLPlayerState.h"
 #include "CustomLyra/Character/CLCharacter.h" 
 #include "CustomLyra/Character/CLPawnExtensionComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ACLGameMode::ACLGameMode(const FObjectInitializer& InObjectInitializer) : Super{InObjectInitializer}
 {
@@ -39,6 +40,14 @@ void ACLGameMode::StartPlay()
 		return;
 	}
 	
+	// 이 OptionString은 GameMode 멤버변수이다.
+	// 우리의 GameInstance가 SetGameMode(FURL); 할때 이 FURL의 옵션이 여기 들어가잇는거겠지
+	if (experienceId.IsValid() == false && UGameplayStatics::HasOption(OptionsString, TEXT("Experience")))
+	{
+		const FString experienceFromOption = UGameplayStatics::ParseOption(OptionsString, TEXT("Experience"));
+		experienceId = FPrimaryAssetId(FPrimaryAssetType(UCLExperienceDefinition::StaticClass()->GetFName()), FName(*experienceFromOption));
+	}
+
 	if (experienceId.IsValid() == false)
 	{
 		experienceId = FPrimaryAssetId(FPrimaryAssetType("CLExperienceDefinition"), FName(TEXT("B_CLDefaultExperience")));

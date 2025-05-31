@@ -1,6 +1,7 @@
 #include "CLExperienceManagerComponent.h"
 #include "CLExperienceDefinition.h"
 #include "CustomLyra/System/CLAssetManager.h"
+#include "GameFeaturesSubsystem.h"
 #include "GameFeaturesSubsystemSettings.h"
 
 UCLExperienceManagerComponent::UCLExperienceManagerComponent(const FObjectInitializer& InObjectInitializer) : Super(InObjectInitializer)
@@ -100,7 +101,47 @@ void UCLExperienceManagerComponent::OnExperienceLoadComplete()
 {
 	static int32 onExperienceLoadComplete_FrameNumber = GFrameNumber;
 
-	OnExperienceFullLoadComplete();
+	GameFeaturePluginURLs.Reset();
+
+	auto collectGameFeaturePluginURLs = [This = this](const UPrimaryDataAsset* Context, const TArray<FString>& FeaturePluginList)
+		{
+			for (const FString& pluginName : FeaturePluginList)
+			{
+				FString pluginURL;
+				if (UGameFeaturesSubsystem::Get().GetPluginURLByName(pluginName, pluginURL) == true)
+				{
+					This->GameFeaturePluginURLs.AddUnique(pluginURL);
+				}
+			}
+		};
+
+	// GameFEaturesToEnable에 있는 plugin들만 일단 활성화
+	collectGameFeaturePluginURLs(CurrentExperience, CurrentExperience->GameFeaturesToEnable);
+
+	// plugin 로딩 및 활성화
+	NumGameFeaturePluginsLoading = GameFeaturePluginURLs.Num();
+	if (NumGameFeaturePluginsLoading > 0)
+	{
+		LoadState = ECLExperienceLoadState::LoadingGameFeatures;
+		for (const FString& pluginURL : GameFeaturePluginURLs)
+		{
+			UGameFeaturesSubsystem::Get().LoadAndActivateGameFeaturePlugin(pluginURL,
+				FGameFeaturePluginLoadComplete::CreateUObject(this, &UCLExperienceManagerComponent::OnGameFeaturePluginLoadComplete));
+		}
+	}
+	else
+	{
+		OnExperienceFullLoadComplete();
+	}
+}
+
+void UCLExperienceManagerComponent::OnGameFeaturePluginLoadComplete(const UE::GameFeatures::FResult& InResult)
+{
+	NumGameFeaturePluginsLoading--;
+	if (NumGameFeaturePluginsLoading == 0)
+	{
+		OnExperienceFullLoadComplete();
+	}
 }
 
 void UCLExperienceManagerComponent::OnExperienceFullLoadComplete()
