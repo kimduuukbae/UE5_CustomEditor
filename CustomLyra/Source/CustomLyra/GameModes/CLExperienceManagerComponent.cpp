@@ -1,5 +1,6 @@
 #include "CLExperienceManagerComponent.h"
 #include "CLExperienceDefinition.h"
+#include "CLExperienceActionSet.h"
 #include "CustomLyra/System/CLAssetManager.h"
 #include "GameFeaturesSubsystem.h"
 #include "GameFeaturesSubsystemSettings.h"
@@ -146,9 +147,37 @@ void UCLExperienceManagerComponent::OnGameFeaturePluginLoadComplete(const UE::Ga
 
 void UCLExperienceManagerComponent::OnExperienceFullLoadComplete()
 {
-	if (LoadState != ECLExperienceLoadState::Loading)
+	if (LoadState == ECLExperienceLoadState::Loaded)
 	{
 		return;
+	}
+
+	LoadState = ECLExperienceLoadState::ExecutingActions;
+	FGameFeatureActivatingContext context;
+	const FWorldContext* worldContext = GEngine->GetWorldContextFromWorld(GetWorld());
+	if (worldContext != nullptr)
+	{
+		context.SetRequiredWorldContextHandle(worldContext->ContextHandle);
+	}
+
+	auto activateListOfActions = [&context](const TArray<UGameFeatureAction*>& ActionList)
+		{
+			for (UGameFeatureAction* action : ActionList)
+			{
+				if (action != nullptr)
+				{
+					action->OnGameFeatureRegistering();
+					action->OnGameFeatureLoading();
+					action->OnGameFeatureActivating(context);
+				}
+			}
+		};
+
+	activateListOfActions(CurrentExperience->Actions);
+
+	for (const TObjectPtr<UCLExperienceActionSet>& actionSet : CurrentExperience->ActionSets)
+	{
+		activateListOfActions(actionSet->Actions);
 	}
 
 	LoadState = ECLExperienceLoadState::Loaded;

@@ -7,14 +7,17 @@
 struct FCLMappableConfigPair;
 class UInputComponent;
 struct FInputActionValue;
+class UCLCameraMode;
 
 UCLASS(Blueprintable, meta=(BlueprintSpawnableComponent))
 class UCLHeroComponent : public UPawnComponent, public IGameFrameworkInitStateInterface
 {
 	GENERATED_BODY()
 
-	static const FName NAME_HeroFeatureName;
 public:
+	static const FName NAME_HeroFeatureName;
+	static const FName NAME_BindInputsNow;
+
 	UCLHeroComponent(const FObjectInitializer& InObjectInitializer = FObjectInitializer::Get());
 
 	virtual void OnRegister() override;

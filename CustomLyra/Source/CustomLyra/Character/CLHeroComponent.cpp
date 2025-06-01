@@ -11,6 +11,7 @@
 #include "Components/GameFrameworkComponentManager.h"
 
 const FName UCLHeroComponent::NAME_HeroFeatureName("Hero");
+const FName UCLHeroComponent::NAME_BindInputsNow("BindInputsNow");
 
 UCLHeroComponent::UCLHeroComponent(const FObjectInitializer& InObjectInitializer) : Super(InObjectInitializer)
 {
@@ -221,6 +222,8 @@ void UCLHeroComponent::InitializePlayerInput(TObjectPtr<UInputComponent> InInput
 			}
 		}
 	}
+
+	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(pawn, NAME_BindInputsNow);
 }
 
 void UCLHeroComponent::Input_Move(const FInputActionValue& InputActionValue)

@@ -11,6 +11,7 @@ enum class ECLExperienceLoadState : uint8
 	UnLoaded = 0,
 	Loading,
 	LoadingGameFeatures,
+	ExecutingActions,
 	Loaded,
 	Deactivating
 };

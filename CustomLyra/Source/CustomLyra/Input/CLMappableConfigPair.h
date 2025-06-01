@@ -1,5 +1,6 @@
 #pragma once
 
+#include "PlayerMappableInputConfig.h"
 #include "CLMappableConfigPair.generated.h"
 
 class UPlayerMappableInputConfig;
