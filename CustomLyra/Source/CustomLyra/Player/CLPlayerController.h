@@ -1,10 +1,10 @@
 #pragma once
 
-#include "GameFramework/PlayerController.h"
+#include "ModularPlayerController.h"
 #include "CLPlayerController.generated.h"
 
 UCLASS()
-class ACLPlayerController : public APlayerController
+class ACLPlayerController : public AModularPlayerController
 {
 	GENERATED_BODY()
 

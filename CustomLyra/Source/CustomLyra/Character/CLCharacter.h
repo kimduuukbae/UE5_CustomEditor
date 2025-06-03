@@ -1,13 +1,13 @@
 #pragma once
 
-#include "GameFramework/Character.h"
+#include "ModularCharacter.h"
 #include "CLCharacter.generated.h"
 
 class UCLPawnExtensionComponent;
 class UCLCameraComponent;
 
 UCLASS()
-class ACLCharacter : public ACharacter
+class ACLCharacter : public AModularCharacter
 {
 	GENERATED_BODY()
 
