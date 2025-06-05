@@ -4,6 +4,8 @@
 #include "CLCharacterPartTypes.h"
 #include "CLControllerComponent_CharacterParts.generated.h"
 
+class UCLPawnComponent_CharacterParts;
+
 USTRUCT()
 struct FCLControllerCharacterPartEntry
 {
@@ -22,6 +24,14 @@ class UCLControllerComponent_CharacterParts : public UControllerComponent
 	GENERATED_BODY()
 public:
 	UCLControllerComponent_CharacterParts(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	
+	UFUNCTION(BlueprintCallable, Category = Cosmetics)
+	void AddCharacterPart(const FCLCharacterPart& NewPart);
+
+	void RemoveAllCharacterParts();
+
+	void AddCharacterPartInternal(const FCLCharacterPart& NewPart);
+	UCLPawnComponent_CharacterParts* GetPawnCustomizer() const;
 
 	UPROPERTY(EditAnywhere, Category = Cosmetics)
 	TArray<FCLControllerCharacterPartEntry> CharacterParts;
