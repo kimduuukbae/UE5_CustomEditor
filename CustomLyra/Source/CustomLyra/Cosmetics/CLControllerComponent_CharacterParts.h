@@ -25,6 +25,9 @@ class UCLControllerComponent_CharacterParts : public UControllerComponent
 public:
 	UCLControllerComponent_CharacterParts(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	UFUNCTION(BlueprintCallable, Category = Cosmetics)
 	void AddCharacterPart(const FCLCharacterPart& NewPart);
 
@@ -32,6 +35,9 @@ public:
 
 	void AddCharacterPartInternal(const FCLCharacterPart& NewPart);
 	UCLPawnComponent_CharacterParts* GetPawnCustomizer() const;
+
+	UFUNCTION()
+	void OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn);
 
 	UPROPERTY(EditAnywhere, Category = Cosmetics)
 	TArray<FCLControllerCharacterPartEntry> CharacterParts;

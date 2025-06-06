@@ -95,7 +95,9 @@ void FCLCharacterPartList::DestroyActorForEntry(FCLAppliedCharacterPartEntry& En
 	}
 }
 
-UCLPawnComponent_CharacterParts::UCLPawnComponent_CharacterParts(const FObjectInitializer& ObjectInitializer) : Super{ObjectInitializer}
+UCLPawnComponent_CharacterParts::UCLPawnComponent_CharacterParts(const FObjectInitializer& ObjectInitializer) 
+	: Super{ObjectInitializer},
+	CharacterPartList(this)
 {
 }
 

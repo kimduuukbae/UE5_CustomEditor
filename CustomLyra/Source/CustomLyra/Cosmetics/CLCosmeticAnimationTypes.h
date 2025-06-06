@@ -3,6 +3,30 @@
 #include "GameplayTagContainer.h"
 #include "CLCosmeticAnimationTypes.generated.h"
 
+USTRUCT(BlueprintType)
+struct FCLAnimLayerSelectionEntry
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UAnimInstance> Layer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTagContainer RequiredTags;
+};
+
+USTRUCT(BlueprintType)
+struct FCLAnimLayerSelectionSet
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FCLAnimLayerSelectionEntry> LayerRules;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UAnimInstance> DefaultLayer;
+};
+
 USTRUCT(BLueprintType)
 struct FCLAnimBodyStyleSelectionEntry
 {
