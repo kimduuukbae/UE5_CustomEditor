@@ -39,6 +39,8 @@ class UCLEquipmentManagerComponent : public UPawnComponent
 public:
 	UCLEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	void UnequipItem(UCLEquipmentInstance* Instance);
+
 	UPROPERTY()
 	FCLEquipmentList EquipmentList;
 };

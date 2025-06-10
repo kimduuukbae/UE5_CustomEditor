@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Components/ActorComponent.h"
+#include "CLInventoryItemDefinition.h"
 #include "CLInventoryManagerComponent.generated.h"
 
 class UCLInventoryItemInstance;
@@ -21,6 +22,8 @@ struct FCLInventoryList
 
 	FCLInventoryList(UActorComponent* InOwnerComponent = nullptr) : OwnerComponent( InOwnerComponent ) {}
 
+	UCLInventoryItemInstance* AddEntry(TSubclassOf<UCLInventoryItemDefinition> ItemDefinition);
+
 	UPROPERTY()
 	TArray<FCLInventoryEntry> Entries;
 
@@ -36,6 +39,10 @@ class UCLInventoryManagerComponent : public UActorComponent
 	GENERATED_BODY()
 public:
 	UCLInventoryManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	UCLInventoryItemInstance* AddItemDefinition(TSubclassOf<UCLInventoryItemDefinition> ItemDefinition);
+
 
 	UPROPERTY()
 	FCLInventoryList InventoryList;

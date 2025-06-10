@@ -1,0 +1,1 @@
+#include "CLInventoryFragment_EquippableItem.h"
