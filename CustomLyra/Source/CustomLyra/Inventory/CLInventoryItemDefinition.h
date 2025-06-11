@@ -16,7 +16,7 @@ class UCLInventoryItemDefinition : public UObject
 public:
 	UCLInventoryItemDefinition(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	const UCLInventoryItemFragment* FindFragmentByClass(TSubclassOf<UCLInventoryItemFragment> FragmentClass);
+	const UCLInventoryItemFragment* FindFragmentByClass(TSubclassOf<UCLInventoryItemFragment> FragmentClass) const;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Display")
 	FText DisplayName = FText::GetEmpty();

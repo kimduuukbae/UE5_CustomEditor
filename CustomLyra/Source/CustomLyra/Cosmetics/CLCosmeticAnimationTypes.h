@@ -20,6 +20,8 @@ struct FCLAnimLayerSelectionSet
 {
 	GENERATED_BODY()
 
+	TSubclassOf<UAnimInstance> SelectBestLayer(const FGameplayTagContainer& CosmeticTags) const;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FCLAnimLayerSelectionEntry> LayerRules;
 

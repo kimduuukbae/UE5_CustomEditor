@@ -65,7 +65,8 @@ bool FCLCharacterPartList::SpawnActorForEntry(FCLAppliedCharacterPartEntry& Entr
 			bCreatedAnyActor = true;
 		}
 	}
-	return false;
+
+	return bCreatedAnyActor;
 }
 
 FGameplayTagContainer FCLCharacterPartList::CollectCombinedTags() const

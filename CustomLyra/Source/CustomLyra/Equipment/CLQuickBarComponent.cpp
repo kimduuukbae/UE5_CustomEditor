@@ -72,14 +72,6 @@ void UCLQuickBarComponent::EquipItemInSlot()
 			}
 		}
 	}
-	if (UCLEquipmentManagerComponent* managerComponent = FindEquipmentManager())
-	{
-		if (EquippedItem != nullptr)
-		{
-			managerComponent->UnequipItem(EquippedItem);
-			EquippedItem = nullptr;
-		}
-	}
 }
 
 void UCLQuickBarComponent::UnequipItemInSlot()

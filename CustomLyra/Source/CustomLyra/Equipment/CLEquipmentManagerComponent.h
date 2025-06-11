@@ -25,6 +25,9 @@ struct FCLEquipmentList
 
 	FCLEquipmentList(UActorComponent* InOwnerComponent = nullptr) : OwnerComponent(InOwnerComponent) {} 
 
+	UCLEquipmentInstance* AddEntry(TSubclassOf<UCLEquipmentDefinition> EquipmentDefinition);
+	void RemoveEntry(UCLEquipmentInstance* Instance);
+
 	UPROPERTY()
 	TArray<FCLAppliedEquipmentEntry> Entries;
 
@@ -40,6 +43,7 @@ public:
 	UCLEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	void UnequipItem(UCLEquipmentInstance* Instance);
+	UCLEquipmentInstance* EquipItem(TSubclassOf<UCLEquipmentDefinition> EquipmentDefinition);
 
 	UPROPERTY()
 	FCLEquipmentList EquipmentList;

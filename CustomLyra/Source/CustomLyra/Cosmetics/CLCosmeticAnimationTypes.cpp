@@ -12,3 +12,16 @@ USkeletalMesh* FCLAnimBodyStyleSelectionSet::SelectBestBodyStyle(const FGameplay
 
 	return DefaultMesh;
 }
+
+TSubclassOf<UAnimInstance> FCLAnimLayerSelectionSet::SelectBestLayer(const FGameplayTagContainer& CosmeticTags) const
+{
+	for (const FCLAnimLayerSelectionEntry& rule : LayerRules)
+	{
+		if (rule.Layer != nullptr && CosmeticTags.HasAll(rule.RequiredTags) == true)
+		{
+			return rule.Layer;
+		}
+	}
+
+	return DefaultLayer;
+}

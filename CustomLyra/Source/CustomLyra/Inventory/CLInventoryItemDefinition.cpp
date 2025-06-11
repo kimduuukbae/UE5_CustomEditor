@@ -4,7 +4,7 @@ UCLInventoryItemDefinition::UCLInventoryItemDefinition(const FObjectInitializer&
 {
 }
 
-const UCLInventoryItemFragment* UCLInventoryItemDefinition::FindFragmentByClass(TSubclassOf<UCLInventoryItemFragment> FragmentClass)
+const UCLInventoryItemFragment* UCLInventoryItemDefinition::FindFragmentByClass(TSubclassOf<UCLInventoryItemFragment> FragmentClass) const
 {
 	if (FragmentClass != nullptr)
 	{
