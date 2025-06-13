@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Components/PawnComponent.h"
+#include "CustomLyra/AbilitySystem/CLAbilitySet.h"
+#include "CustomLyra/AbilitySystem/CLAbilitySystemComponent.h"
 #include "CLEquipmentManagerComponent.generated.h"
 
 class UCLEquipmentDefinition;
@@ -16,6 +18,9 @@ struct FCLAppliedEquipmentEntry
 
 	UPROPERTY()
 	TObjectPtr<UCLEquipmentInstance> Instance = nullptr;
+
+	UPROPERTY()
+	FCLAbilitySet_GrantedHandles GrantedHandles;
 };
 
 USTRUCT(BlueprintType)
@@ -27,6 +32,7 @@ struct FCLEquipmentList
 
 	UCLEquipmentInstance* AddEntry(TSubclassOf<UCLEquipmentDefinition> EquipmentDefinition);
 	void RemoveEntry(UCLEquipmentInstance* Instance);
+	UCLAbilitySystemComponent* GetAbilitySystemComponent();
 
 	UPROPERTY()
 	TArray<FCLAppliedEquipmentEntry> Entries;

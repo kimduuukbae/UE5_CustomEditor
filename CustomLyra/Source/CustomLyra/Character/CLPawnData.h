@@ -8,6 +8,8 @@
 #include "CustomLyra/Camera/CLCameraMode.h"
 #include "CLPawnData.generated.h"
 
+class UCLAbilitySet;
+
 UCLASS()
 class CUSTOMLYRA_API UCLPawnData : public UPrimaryDataAsset
 {
@@ -24,4 +26,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CL|InputConfig")
 	TObjectPtr<UCLInputConfig> InputConfig;
+
+	// 해당 Pawn에 적용할 AbilitySet
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CL|Abilities")
+	TArray<TObjectPtr<UCLAbilitySet>> AbilitySet;
 };

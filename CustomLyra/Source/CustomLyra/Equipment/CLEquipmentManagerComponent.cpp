@@ -1,6 +1,9 @@
 #include "CLEquipmentManagerComponent.h"
 #include "CLEquipmentInstance.h"
 #include "CLEquipmentDefinition.h"
+#include "AbilitySystemGlobals.h"
+#include "CustomLyra/AbilitySystem/CLAbilitySystemComponent.h"
+#include "CustomLyra/AbilitySystem/CLAbilitySet.h"
 
 UCLEquipmentInstance* FCLEquipmentList::AddEntry(TSubclassOf<UCLEquipmentDefinition> EquipmentDefinition)
 {
@@ -19,6 +22,12 @@ UCLEquipmentInstance* FCLEquipmentList::AddEntry(TSubclassOf<UCLEquipmentDefinit
 	newEntry.Instance = NewObject<UCLEquipmentInstance>(OwnerComponent->GetOwner(), instanceType);
 	result = newEntry.Instance;
 
+	UCLAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	for (TObjectPtr<UCLAbilitySet> abilitySet : equipmentCDO->AbilitySetToGrant)
+	{
+		abilitySet->GiveToAbilitySystem(ASC, &newEntry.GrantedHandles, result);
+	}
+
 	result->SpawnEquipmentActors(equipmentCDO->ActorsToSpawn);
 
 	return result;
@@ -31,10 +40,18 @@ void FCLEquipmentList::RemoveEntry(UCLEquipmentInstance* Instance)
 		FCLAppliedEquipmentEntry& entry = *it;
 		if (entry.Instance == Instance)
 		{
+			UCLAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+			entry.GrantedHandles.TakeFromAbilitySystem(ASC);
 			Instance->DestroyEquipmentActors();
 			it.RemoveCurrent();
 		}
 	}
+}
+
+UCLAbilitySystemComponent* FCLEquipmentList::GetAbilitySystemComponent()
+{
+	AActor* owningActor = OwnerComponent->GetOwner();
+	return Cast<UCLAbilitySystemComponent>(UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(owningActor));
 }
 
 UCLEquipmentManagerComponent::UCLEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer), EquipmentList(this)

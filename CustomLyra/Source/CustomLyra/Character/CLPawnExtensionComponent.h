@@ -5,6 +5,7 @@
 #include "CLPawnExtensionComponent.generated.h"
 
 class UCLPawnData;
+class UCLAbilitySystemComponent;
 
 UCLASS()
 class UCLPawnExtensionComponent : public UPawnComponent, public IGameFrameworkInitStateInterface
@@ -35,8 +36,15 @@ public:
 	virtual void CheckDefaultInitialization() override;
 
 	void SetupPlayerInputComponent();
+	void InitializeAbilitySystem(UCLAbilitySystemComponent* InAbilitySystemComponent, AActor* InOwner);
+	void UnInitializeAbilitySystem();
+
+	UCLAbilitySystemComponent* GetCLAbilitySystemComponent() const { return AbilitySystemComponent; }
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "CL|Pawn")
 	TObjectPtr<const UCLPawnData> PawnData;
+
+	UPROPERTY()
+	TObjectPtr<UCLAbilitySystemComponent> AbilitySystemComponent = nullptr;
 };

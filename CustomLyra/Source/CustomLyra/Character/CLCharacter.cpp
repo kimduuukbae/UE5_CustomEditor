@@ -19,3 +19,8 @@ void ACLCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 	PawnExtensionComponent->SetupPlayerInputComponent();
 }
+
+UAbilitySystemComponent* ACLCharacter::GetAbilitySystemComponent() const
+{
+	return PawnExtensionComponent->GetCLAbilitySystemComponent();
+}

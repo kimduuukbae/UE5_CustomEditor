@@ -3,6 +3,7 @@
 #include "CLEquipmentDefinition.generated.h"
 
 class UCLEquipmentInstance;
+class UCLAbilitySet;
 
 USTRUCT()
 struct FCLEquipmentActorToSpawn
@@ -31,4 +32,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Equipment")
 	TArray<FCLEquipmentActorToSpawn> ActorsToSpawn;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Equipment")
+	TArray<TObjectPtr<UCLAbilitySet>> AbilitySetToGrant;
 };

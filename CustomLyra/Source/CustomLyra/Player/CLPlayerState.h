@@ -5,6 +5,7 @@
 #include "CLPlayerState.generated.h"
 
 class UCLExperienceDefinition;
+class UCLAbilitySystemComponent;
 
 UCLASS()
 class ACLPlayerState : public APlayerState
@@ -21,6 +22,14 @@ public:
 	template <typename T>
 	TObjectPtr<const T> GetPawnData() const {return Cast<const T>(PawnData); }
 
+	TObjectPtr<UCLAbilitySystemComponent> GetCLAbilitySystemComponent() const
+	{
+		return AbilitySystemComponent;
+	}
+
 	UPROPERTY()
 	TObjectPtr<const UCLPawnData> PawnData;
+
+	UPROPERTY()
+	TObjectPtr<UCLAbilitySystemComponent> AbilitySystemComponent = nullptr;
 };

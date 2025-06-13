@@ -8,6 +8,7 @@
 #include "CustomLyra/Camera/CLCameraComponent.h"
 #include "CustomLyra/Input/CLMappableConfigPair.h"
 #include "CustomLyra/Input/CLInputComponent.h"
+#include "CustomLyra/AbilitySystem/CLAbilitySystemComponent.h"
 #include "Components/GameFrameworkComponentManager.h"
 
 const FName UCLHeroComponent::NAME_HeroFeatureName("Hero");
@@ -125,6 +126,8 @@ void UCLHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Man
 		if (TObjectPtr<UCLPawnExtensionComponent> pawnExtensionComponent = UCLPawnExtensionComponent::FindPawnExtensionComponent(pawn))
 		{
 			pawnData = pawnExtensionComponent->GetPawnData<UCLPawnData>();
+
+			pawnExtensionComponent->InitializeAbilitySystem(playerState->GetCLAbilitySystemComponent(), playerState);
 		}
 
 		if (bIsLocallyControlled == true && IsValid(pawnData) == true)

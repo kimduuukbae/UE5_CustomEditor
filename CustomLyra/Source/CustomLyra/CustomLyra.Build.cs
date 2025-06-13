@@ -14,6 +14,8 @@ public class CustomLyra : ModuleRules
 			"Engine",
 			"InputCore",
 			"GameplayTags",
+			"GameplayTasks",
+			"GameplayAbilities",
 			"ModularGameplay",
 			"GameFeatures",
 			"InputCore",

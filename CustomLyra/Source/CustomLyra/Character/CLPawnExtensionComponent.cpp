@@ -1,5 +1,6 @@
 #include "CLPawnExtensionComponent.h"
 #include "CustomLyra/CLGameplayTags.h"
+#include "CustomLyra/AbilitySystem/CLAbilitySystemComponent.h"
 #include "CLPawnData.h"
 #include "Components/GameFrameworkComponentManager.h"
 
@@ -155,3 +156,32 @@ void UCLPawnExtensionComponent::SetupPlayerInputComponent()
 {
 	CheckDefaultInitialization();
 }
+
+void UCLPawnExtensionComponent::InitializeAbilitySystem(UCLAbilitySystemComponent* InAbilitySystemComponent, AActor* InOwner)
+{
+	if (AbilitySystemComponent == InAbilitySystemComponent)
+	{
+		return;
+	}
+
+	if (AbilitySystemComponent != nullptr)
+	{
+		UnInitializeAbilitySystem();
+	}
+
+	APawn* pawn = GetPawnChecked<APawn>();
+
+	AbilitySystemComponent = InAbilitySystemComponent;
+	AbilitySystemComponent->InitAbilityActorInfo(InOwner, pawn);
+}
+
+void UCLPawnExtensionComponent::UnInitializeAbilitySystem()
+{
+	if (AbilitySystemComponent == nullptr)
+	{
+		return;
+	}
+
+	AbilitySystemComponent = nullptr;
+}
+
