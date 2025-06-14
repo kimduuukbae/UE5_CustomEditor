@@ -219,6 +219,8 @@ void UCLHeroComponent::InitializePlayerInput(TObjectPtr<UInputComponent> InInput
 				TObjectPtr<UCLInputComponent> inputComponent = CastChecked<UCLInputComponent>(InInputComponent);
 				if (IsValid(inputComponent) == true)
 				{
+					TArray<uint32> bindHandles;
+					inputComponent->BindAbilityActions(inputConfig, this, &UCLHeroComponent::Input_AbilityInputTagPressed, &UCLHeroComponent::Input_AbilityInputTagReleased, bindHandles);
 					inputComponent->BindNativeAction(inputConfig, gameplayTags.InputTag_Move, ETriggerEvent::Triggered, this, &UCLHeroComponent::Input_Move);
 					inputComponent->BindNativeAction(inputConfig, gameplayTags.InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &UCLHeroComponent::Input_LookMouse);
 				}
@@ -276,5 +278,33 @@ void UCLHeroComponent::Input_LookMouse(const FInputActionValue& InputActionValue
 	if (FMath::IsNearlyZero(value.Y) == false)
 	{
 		pawn->AddControllerPitchInput(-value.Y);
+	}
+}
+
+void UCLHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	if (const TObjectPtr<APawn> pawn = GetPawn<APawn>())
+	{
+		if (const UCLPawnExtensionComponent* pawnExtensionComponent = UCLPawnExtensionComponent::FindPawnExtensionComponent(pawn))
+		{
+			if (UCLAbilitySystemComponent* ASC = pawnExtensionComponent->GetCLAbilitySystemComponent())
+			{
+				ASC->AbilityInputTagPressed(InputTag);
+			}
+		}
+	}
+}
+
+void UCLHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	if (const TObjectPtr<APawn> pawn = GetPawn<APawn>())
+	{
+		if (const UCLPawnExtensionComponent* pawnExtensionComponent = UCLPawnExtensionComponent::FindPawnExtensionComponent(pawn))
+		{
+			if (UCLAbilitySystemComponent* ASC = pawnExtensionComponent->GetCLAbilitySystemComponent())
+			{
+				ASC->AbilityInputTagReleased(InputTag);
+			}
+		}
 	}
 }

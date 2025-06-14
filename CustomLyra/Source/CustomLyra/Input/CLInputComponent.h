@@ -33,18 +33,18 @@ inline void UCLInputComponent::BindNativeAction(TObjectPtr<const UCLInputConfig>
 template<typename UserClass, typename PressedFuncType, typename ReleasedFuncType>
 inline void UCLInputComponent::BindAbilityActions(TObjectPtr<const UCLInputConfig> InputConfig, UserClass* InObject, PressedFuncType InPressedFunc, ReleasedFuncType InReleasedFunc, TArray<uint32>& BindHandles)
 {
-	if (const FCLInputAction& inputAction : InputConfig->AbilityInputActions)
+	for (const FCLInputAction& inputAction : InputConfig->AbilityInputActions)
 	{
 		if (inputAction.InputAction != nullptr && inputAction.InputTag.IsValid() == true)
 		{
 			if (InPressedFunc)
 			{
-				BindHandles.Add(BindAction(inputAction.InputAction, ETriggerEvent::Triggered, InObject, PressedFunc, inputAction.InputTag).GetHandle());
+				BindHandles.Add(BindAction(inputAction.InputAction, ETriggerEvent::Triggered, InObject, InPressedFunc, inputAction.InputTag).GetHandle());
 			}
 
 			if (InReleasedFunc)
 			{
-				BindHandles.Add(BindAction(inputAction.InputAction, ETriggerEvent::Completed, InObject, ReleasedFunc, inputAction.InputTag).GetHandle());
+				BindHandles.Add(BindAction(inputAction.InputAction, ETriggerEvent::Completed, InObject, InReleasedFunc, inputAction.InputTag).GetHandle());
 			}
 		}
 	}
