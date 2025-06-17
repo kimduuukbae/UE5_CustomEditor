@@ -11,4 +11,6 @@ class UCLGameplayAbility_FromEquipment : public UCLGameplayAbility
 
 public:
 	UCLGameplayAbility_FromEquipment(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	UCLEquipmentInstance* GetAssociatedEquipment() const;
 };
