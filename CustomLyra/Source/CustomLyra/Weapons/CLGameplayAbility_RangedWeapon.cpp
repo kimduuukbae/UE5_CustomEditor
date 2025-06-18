@@ -1,5 +1,6 @@
 #include "CLGameplayAbility_RangedWeapon.h"
 #include "CLRangedWeaponInstance.h"
+#include "CustomLyra/Physics/CLCollisionChannels.h"
 
 UCLGameplayAbility_RangedWeapon::UCLGameplayAbility_RangedWeapon(const FObjectInitializer& ObjectInitializer) : Super{ObjectInitializer}
 {
@@ -100,4 +101,112 @@ FVector UCLGameplayAbility_RangedWeapon::GetWeaponTargetingSourceLocation() cons
 {
 	APawn* avatarPawn = Cast<APawn>(GetAvatarActorFromActorInfo());
 	return avatarPawn->GetActorLocation();
+}
+
+void UCLGameplayAbility_RangedWeapon::TraceBulletsInCartridge(const FRangedWeaponFiringInput& InputData, TArray<FHitResult>& OutHits)
+{
+	UCLRangedWeaponInstance* weaponData = InputData.WeaponData;
+
+	const FVector bulletDir = InputData.AimDir;
+	const FVector endTrace = InputData.StartTrace + (bulletDir * weaponData->MaxDamageRange);
+
+	FVector hitLocation = endTrace;
+
+	TArray<FHitResult> allImpacts;
+	FHitResult impact = DoSingleBulletTrace(InputData.StartTrace, endTrace, weaponData->BulletTraceWeaponRadius, false, allImpacts);
+
+	const AActor* hitActor = impact.GetActor();
+	if (IsValid(hitActor) == true)
+	{
+		if (allImpacts.Num() > 0)
+		{
+			OutHits.Append(allImpacts);
+		}
+	}
+}
+
+
+
+FHitResult UCLGameplayAbility_RangedWeapon::WeaponTrace(const FVector& StartTrace, const FVector& EndTrace, float SweepRadius, bool bIsSimulated, TArray<FHitResult>& OutHits)
+{
+	TArray<FHitResult> hitResults;
+
+	FCollisionQueryParams traceParam(SCENE_QUERY_STAT(WeaponTrace), true, GetAvatarActorFromActorInfo());
+	traceParam.bReturnPhysicalMaterial = true;
+
+	AddAdditionalTraceIgnoreActors(traceParam);
+
+	const ECollisionChannel traceChannel = DetermineTraceChannel(traceParam, bIsSimulated);
+	if (SweepRadius > 0.0f)
+	{
+		GetWorld()->SweepMultiByChannel(hitResults, StartTrace, EndTrace, FQuat::Identity, traceChannel, FCollisionShape::MakeSphere(SweepRadius), traceParam);
+	}
+	else
+	{
+		GetWorld()->LineTraceMultiByChannel(hitResults, StartTrace, EndTrace, traceChannel, traceParam);
+	}
+
+	return FHitResult();
+}
+
+int32 FindFirstPawnHitResult(const TArray<FHitResult>& HitResults)
+{
+	for (int32 index = 0; index < HitResults.Num(); ++index)
+	{
+		const FHitResult& curHitResult = HitResults[index];
+		if (curHitResult.HitObjectHandle.DoesRepresentClass(APawn::StaticClass()) == true)
+		{
+			return index;
+		}
+		else
+		{
+			AActor* hitActor = curHitResult.HitObjectHandle.FetchActor();
+
+			if (IsValid(hitActor) == true && hitActor->GetAttachParentActor() != nullptr && Cast<APawn>(hitActor->GetAttachParentActor()) != nullptr)
+			{
+				return index;
+			}
+		}
+	}
+
+	return INDEX_NONE;
+}
+
+FHitResult UCLGameplayAbility_RangedWeapon::DoSingleBulletTrace(const FVector& StartTrace, const FVector& EndTrace, float SweepRadius, bool bIsSimulated, TArray<FHitResult>& OutHits)
+{
+	FHitResult impact;
+
+	if (FindFirstPawnHitResult(OutHits) == INDEX_NONE)
+	{
+		impact = WeaponTrace(StartTrace, EndTrace, 0.0f, bIsSimulated, OutHits);
+	}
+
+	if (FindFirstPawnHitResult(OutHits) == INDEX_NONE)
+	{
+		if (SweepRadius > 0.0f)
+		{
+			TArray<FHitResult> sweepHits;
+			impact = WeaponTrace(StartTrace, EndTrace, SweepRadius, bIsSimulated, sweepHits);
+
+			int32 firstPawnIndex = FindFirstPawnHitResult(sweepHits);
+		}
+	}
+
+	return FHitResult();
+}
+
+void UCLGameplayAbility_RangedWeapon::AddAdditionalTraceIgnoreActors(FCollisionQueryParams& TraceParam) const
+{
+	if (AActor* avatar = GetAvatarActorFromActorInfo())
+	{
+		TArray<AActor*> attachedActors;
+
+		avatar->GetAttachedActors(attachedActors);
+		TraceParam.AddIgnoredActors(attachedActors);
+	}
+}
+
+ECollisionChannel UCLGameplayAbility_RangedWeapon::DetermineTraceChannel(FCollisionQueryParams& TraceParam, bool bIsSimulated) const
+{
+	return CL_TraceChannel_Weapon;
 }

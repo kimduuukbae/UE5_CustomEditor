@@ -34,4 +34,11 @@ public:
 	UCLRangedWeaponInstance* GetWeaponInstance();
 	FTransform GetTargetingTransform(APawn* SourcePawn, ECLAbilityTargetingSource Source);
 	FVector GetWeaponTargetingSourceLocation() const;
+
+	void TraceBulletsInCartridge(const FRangedWeaponFiringInput& InputData, TArray<FHitResult>& OutHits);
+	FHitResult WeaponTrace(const FVector& StartTrace, const FVector& EndTrace, float SweepRadius, bool bIsSimulated, TArray<FHitResult>& OutHits);
+	FHitResult DoSingleBulletTrace(const FVector& StartTrace, const FVector& EndTrace, float SweepRadius, bool bIsSimulated, TArray<FHitResult>& OutHits);
+
+	void AddAdditionalTraceIgnoreActors(FCollisionQueryParams& TraceParam) const;
+	ECollisionChannel DetermineTraceChannel(FCollisionQueryParams& TraceParam, bool bIsSimulated) const;
 };
