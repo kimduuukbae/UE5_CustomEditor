@@ -30,6 +30,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void StartRangedWeaponTargeting();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnRangeWeaponTargetDataReady(const FGameplayAbilityTargetDataHandle& TargetData);
+
 	void PerformLocalTargeting(TArray<FHitResult>& OutHits);
 	UCLRangedWeaponInstance* GetWeaponInstance();
 	FTransform GetTargetingTransform(APawn* SourcePawn, ECLAbilityTargetingSource Source);
@@ -41,4 +45,6 @@ public:
 
 	void AddAdditionalTraceIgnoreActors(FCollisionQueryParams& TraceParam) const;
 	ECollisionChannel DetermineTraceChannel(FCollisionQueryParams& TraceParam, bool bIsSimulated) const;
+
+	void OnTargetDataReadyCallback(const FGameplayAbilityTargetDataHandle& InData, FGameplayTag ApplicationTag);
 };

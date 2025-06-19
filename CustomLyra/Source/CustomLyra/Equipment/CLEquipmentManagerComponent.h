@@ -51,6 +51,9 @@ public:
 	void UnequipItem(UCLEquipmentInstance* Instance);
 	UCLEquipmentInstance* EquipItem(TSubclassOf<UCLEquipmentDefinition> EquipmentDefinition);
 
+	UFUNCTION(BlueprintCallable)
+	TArray<UCLEquipmentInstance*> GetEquipmentInstancesOfType(TSubclassOf<UCLEquipmentInstance> InstanceType) const;
+
 	UPROPERTY()
 	FCLEquipmentList EquipmentList;
 };

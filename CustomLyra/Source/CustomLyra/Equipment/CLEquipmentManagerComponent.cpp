@@ -82,3 +82,20 @@ UCLEquipmentInstance* UCLEquipmentManagerComponent::EquipItem(TSubclassOf<UCLEqu
 
 	return result;
 }
+
+TArray<UCLEquipmentInstance*> UCLEquipmentManagerComponent::GetEquipmentInstancesOfType(TSubclassOf<UCLEquipmentInstance> InstanceType) const
+{
+	TArray<UCLEquipmentInstance*> results;
+	for (const FCLAppliedEquipmentEntry& entry : EquipmentList.Entries)
+	{
+		if (UCLEquipmentInstance* instance = entry.Instance)
+		{
+			if (instance->IsA(InstanceType) == true)
+			{
+				results.Add(instance);
+			}
+		}
+	}
+
+	return results;
+}

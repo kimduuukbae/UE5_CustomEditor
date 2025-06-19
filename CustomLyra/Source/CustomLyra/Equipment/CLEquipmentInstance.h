@@ -26,6 +26,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = Equipment, meta = (DeterminesOutputType = PawnType))
 	APawn* GetTypedPawn(TSubclassOf<APawn> PawnType) const;
 
+	UFUNCTION(BlueprintPure, Category = Equipment)
+	TArray<AActor*> GetSpawnedActors() const { return SpawnedActors;}
+
 	virtual void OnEquipped();
 	virtual void OnUnequipped();
 

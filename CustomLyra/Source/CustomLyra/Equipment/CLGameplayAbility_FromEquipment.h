@@ -4,6 +4,8 @@
 #include "CustomLyra/AbilitySystem/Abilities/CLGameplayAbility.h"
 #include "CLGameplayAbility_FromEquipment.generated.h"
 
+class UCLEquipmentInstance;
+
 UCLASS()
 class UCLGameplayAbility_FromEquipment : public UCLGameplayAbility
 {

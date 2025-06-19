@@ -1,6 +1,8 @@
 #include "CLGameplayAbility_RangedWeapon.h"
 #include "CLRangedWeaponInstance.h"
 #include "CustomLyra/Physics/CLCollisionChannels.h"
+#include "CustomLyra/AbilitySystem/CLGameplayAbilityTargetData_SingleTargetHit.h"
+#include "AbilitySystemComponent.h"
 
 UCLGameplayAbility_RangedWeapon::UCLGameplayAbility_RangedWeapon(const FObjectInitializer& ObjectInitializer) : Super{ObjectInitializer}
 {
@@ -26,7 +28,7 @@ void UCLGameplayAbility_RangedWeapon::StartRangedWeaponTargeting()
 		{
 			FCLGameplayAbilityTargetData_SingleTargetHit* newTargetData = new FCLGameplayAbilityTargetData_SingleTargetHit();
 			newTargetData->HitResult = result;
-			newTargetData->CartridgeID = cartridgeID;
+			newTargetData->CartridgeId = cartridgeID;
 			targetData.Add(newTargetData);
 		}
 	}
@@ -146,7 +148,31 @@ FHitResult UCLGameplayAbility_RangedWeapon::WeaponTrace(const FVector& StartTrac
 		GetWorld()->LineTraceMultiByChannel(hitResults, StartTrace, EndTrace, traceChannel, traceParam);
 	}
 
-	return FHitResult();
+	FHitResult hit{ ForceInit };
+	if (hitResults.Num() > 0)
+	{
+		for (FHitResult& curHitResult : hitResults)
+		{
+			auto pred = [&curHitResult](const FHitResult& InOther)
+				{
+					return InOther.HitObjectHandle == curHitResult.HitObjectHandle;
+				};
+
+			if (OutHits.ContainsByPredicate(pred) == false)
+			{
+				OutHits.Add(curHitResult);
+			}
+		}
+
+		hit = OutHits.Last();
+	}
+	else
+	{
+		hit.TraceStart = StartTrace;
+		hit.TraceEnd = EndTrace;
+	}
+
+	return hit;
 }
 
 int32 FindFirstPawnHitResult(const TArray<FHitResult>& HitResults)
@@ -209,4 +235,23 @@ void UCLGameplayAbility_RangedWeapon::AddAdditionalTraceIgnoreActors(FCollisionQ
 ECollisionChannel UCLGameplayAbility_RangedWeapon::DetermineTraceChannel(FCollisionQueryParams& TraceParam, bool bIsSimulated) const
 {
 	return CL_TraceChannel_Weapon;
+}
+
+void UCLGameplayAbility_RangedWeapon::OnTargetDataReadyCallback(const FGameplayAbilityTargetDataHandle& InData, FGameplayTag ApplicationTag)
+{
+	UAbilitySystemComponent* abilitySystemComponent = CurrentActorInfo->AbilitySystemComponent.Get();
+
+	if (const FGameplayAbilitySpec* spec = abilitySystemComponent->FindAbilitySpecFromHandle(CurrentSpecHandle))
+	{
+		FGameplayAbilityTargetDataHandle localTargetDataHandle = MoveTemp(const_cast<FGameplayAbilityTargetDataHandle&>(InData));
+
+		if (CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo) == true)
+		{
+			OnRangeWeaponTargetDataReady(localTargetDataHandle);
+		}
+		else
+		{
+			K2_EndAbility();
+		}
+	}
 }
