@@ -135,6 +135,7 @@ FHitResult UCLGameplayAbility_RangedWeapon::WeaponTrace(const FVector& StartTrac
 
 	FCollisionQueryParams traceParam(SCENE_QUERY_STAT(WeaponTrace), true, GetAvatarActorFromActorInfo());
 	traceParam.bReturnPhysicalMaterial = true;
+	traceParam.bIgnoreBlocks = false;
 
 	AddAdditionalTraceIgnoreActors(traceParam);
 
