@@ -1,7 +1,25 @@
 #include "CLAbilitySystemComponent.h"
 #include "Abilities/CLGameplayAbility.h"
+#include "CustomLyra/Animation/CLAnimInstance.h"
 UCLAbilitySystemComponent::UCLAbilitySystemComponent(const FObjectInitializer& ObjectInitializer) : Super{ObjectInitializer}
 {
+}
+
+void UCLAbilitySystemComponent::InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor)
+{
+	FGameplayAbilityActorInfo* actorInfo = AbilityActorInfo.Get();
+
+	bool bHasNewPawnAvatar = Cast<APawn>(InAvatarActor) != nullptr && InAvatarActor != actorInfo->AvatarActor;
+
+	Super::InitAbilityActorInfo(InOwnerActor, InAvatarActor);
+
+	if (bHasNewPawnAvatar == true)
+	{
+		if (UCLAnimInstance* animInstance = Cast<UCLAnimInstance>(actorInfo->GetAnimInstance()))
+		{
+			animInstance->InitializeWithAbilitySystem(this);
+		}
+	}
 }
 
 void UCLAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
